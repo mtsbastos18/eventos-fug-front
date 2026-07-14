@@ -2,7 +2,7 @@
 
 <div *ngIf="!isLoading && event" class="w-full h-64 md:h-80 lg:h-96 bg-gray-200 relative overflow-hidden">
     <!-- Imagem de Banner que virá do backend. Utilizando placeholder temporário caso não exista -->
-    <img [src]="event.image_path ? storageUrl + event.image_path : 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'"
+    <img [src]="event.image_path ? storageUrl + event.image_path : 'https://eventosfug.com.br/eventos_api/storage/fugnacional_cover.jpeg'"
         alt="Banner do evento" class="w-full h-full object-cover">
     <!-- <div class="absolute inset-0  bg-opacity-30 flex items-end">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8">

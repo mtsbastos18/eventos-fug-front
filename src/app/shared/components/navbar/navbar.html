@@ -1,27 +1,27 @@
-<nav class="bg-white shadow-lg relative z-50">
+<nav class="bg-green-600 shadow-lg relative z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <div class="flex-shrink-0 cursor-pointer flex items-center" routerLink="/">
-                <img src="logo.png" alt="EventosHub" class="h-8 w-auto">
+                <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-13">
             </div>
             <div class="flex items-center space-x-4">
-                <a routerLink="/" class="text-gray-600 hover:text-green-600 font-medium transition-colors">Eventos</a>
+                <a routerLink="/" class="text-white hover:text-orange font-medium transition-colors">Eventos</a>
 
                 <ng-container *ngIf="authService.currentUser$ | async as user; else unauth">
                     <a routerLink="/admin/dashboard"
-                        class="text-gray-600 hover:text-green-600 font-medium transition-colors">Dashboard</a>
+                        class="text-white hover:text-orange font-medium transition-colors">Dashboard</a>
                     <a routerLink="/admin/events"
-                        class="text-gray-600 hover:text-green-600 font-medium transition-colors">Gerenciar</a>
-                    <span class="ml-4 text-sm text-gray-500">Olá, {{ user.name }}</span>
+                        class="text-white hover:text-orange font-medium transition-colors">Gerenciar</a>
+                    <span class="ml-4 text-sm text-white">Olá, {{ user.name }}</span>
                     <button (click)="logout()"
-                        class="bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
+                        class="bg-red-800 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
                         Sair
                     </button>
                 </ng-container>
 
                 <ng-template #unauth>
                     <a routerLink="/login"
-                        class="bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
+                        class="bg-green-500 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
                         Área Restrita
                     </a>
                 </ng-template>

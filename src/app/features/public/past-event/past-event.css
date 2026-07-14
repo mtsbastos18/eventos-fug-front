@@ -1,17 +1,17 @@
 /* Scroll vertical para galeria de imagens */
 .gallery-scroll {
 	scrollbar-width: thin;
-	scrollbar-color: #a3a3a3 #f3f4f6;
+	scrollbar-color: #ab1e26 #f1edec;
 }
 .gallery-scroll::-webkit-scrollbar {
 	width: 8px;
 }
 .gallery-scroll::-webkit-scrollbar-thumb {
-	background: #a3a3a3;
+	background: #ab1e26;
 	border-radius: 8px;
 }
 .gallery-scroll::-webkit-scrollbar-track {
-	background: #f3f4f6;
+	background: #f1edec;
 	border-radius: 8px;
 }
 /* Imagem flutuante para artigo de notícia */
