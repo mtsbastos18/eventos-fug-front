@@ -13,16 +13,23 @@
                     Inscritos {{ event ? '- ' + event.title : '' }}
                 </h1>
                 <p *ngIf="event?.subtitle" class="text-sm text-gray-500 mt-1">{{ event?.subtitle }}</p>
-                <!-- Campo de busca -->
-                <div class="mt-4">
-                    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()"
+                <!-- Formulário de busca -->
+                <form [formGroup]="filterForm" class="mt-4 flex flex-col sm:flex-row gap-2">
+                    <select formControlName="filterType"
+                        class="px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="all">Todos os campos</option>
+                        <option value="name">Nome</option>
+                        <option value="email">E-mail</option>
+                        <option value="cpf">CPF</option>
+                    </select>
+                    <input type="text" formControlName="search" [mask]="cpfMask"
                         placeholder="Buscar participante..."
                         class="w-full sm:w-80 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-                </div>
+                </form>
             </div>
             <div class="flex items-center gap-4">
                 <div *ngIf="event" class="text-sm text-gray-500 bg-white px-3 py-1 rounded shadow">
-                    Capacidade: {{ participants.length }} / {{ event.capacity }}
+                    Capacidade: {{ totalParticipants }} / {{ event.capacity }}
                 </div>
                 <button *ngIf="event" (click)="exportParticipants()"
                     class="px-3 py-1 bg-green-600 text-white rounded hover:bg-blue-700 transition-colors text-xs font-medium shadow">
@@ -78,7 +85,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Lista de Participantes -->
-                        <tr *ngFor="let participant of paginatedParticipants">
+                        <tr *ngFor="let participant of participants">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                 participant.name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ participant.email }}</td>
@@ -104,7 +111,7 @@
                         </tr>
 
                         <!-- Tratamento para tabela vazia -->
-                        <tr *ngIf="paginatedParticipants.length === 0">
+                        <tr *ngIf="participants.length === 0">
                             <td colspan="9" class="px-6 py-8 text-center text-sm text-gray-500">
                                 Nenhum inscrito neste evento.
                             </td>
@@ -115,10 +122,10 @@
 
             <!-- Rodapé com Paginação (Removido de dentro da table) -->
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between sm:px-6"
-                *ngIf="filteredParticipants.length > 0">
+                *ngIf="totalParticipants > 0">
                 <div class="text-sm text-gray-600">
-                    Página {{ currentPage }} de {{ totalPages }}
-                    <span class="hidden sm:inline">({{ filteredParticipants.length }} resultados)</span>
+                    Página {{ currentPage }} de {{ lastPage }}
+                    <span class="hidden sm:inline">({{ totalParticipants }} resultados)</span>
                 </div>
                 <div class="flex gap-1">
                     <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
@@ -126,15 +133,15 @@
                         Anterior
                     </button>
 
-                    <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
-                        <button (click)="goToPage(i + 1)"
-                            [ngClass]="currentPage === (i + 1) ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
+                    <ng-container *ngFor="let page of visiblePages">
+                        <button (click)="goToPage(page)"
+                            [ngClass]="currentPage === page ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
                             class="px-3 py-1 rounded border text-sm font-medium transition-colors mx-0.5">
-                            {{ i + 1 }}
+                            {{ page }}
                         </button>
                     </ng-container>
 
-                    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === lastPage"
                         class="px-3 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-sm font-medium text-gray-700 transition-colors">
                         Próxima
                     </button>
