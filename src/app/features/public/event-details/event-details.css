@@ -33,3 +33,15 @@ h1.banner {
 ::ng-deep .toast {
     pointer-events: all;
 }
+
+img {
+    object-fit: fill;
+}
+
+@media (max-width: 768px) {
+
+    img {
+        object-fit: cover;
+    }
+}
+
