@@ -1,9 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { NgxMaskPipe } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { Subject, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { EventService } from '../../../core/services/event';
 import { Participant } from '../../../shared/models/participant';
 import { EventModel } from '../../../shared/models/event';
@@ -11,7 +13,14 @@ import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 
 @Component({
   selector: 'app-participant-list',
-  imports: [CommonModule, FormsModule, NavbarComponent, RouterLink, NgxMaskPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NavbarComponent,
+    RouterLink,
+    NgxMaskPipe,
+    NgxMaskDirective,
+  ],
   templateUrl: './participant-list.html',
   styleUrl: './participant-list.css',
 })
@@ -19,40 +28,48 @@ export class ParticipantListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private eventService = inject(EventService);
   private toastr = inject(ToastrService);
+  private fb = inject(FormBuilder);
 
   eventId!: number;
   event: EventModel | null = null;
   participants: Participant[] = [];
-  filteredParticipants: Participant[] = [];
+  totalParticipants = 0;
   isLoading = true;
   error = '';
   deletingParticipantId: number | null = null;
 
-  searchTerm: string = '';
+  filterForm: FormGroup = this.fb.group({
+    search: [''],
+    filterType: ['all'],
+  });
 
-  // Paginação
-  currentPage: number = 1;
-  pageSize: number = 10;
-  get totalPages(): number {
-    return Math.ceil(this.filteredParticipants.length / this.pageSize) || 1;
+  currentPage = 1;
+  lastPage = 1;
+
+  private reload$ = new Subject<void>();
+
+  get cpfMask(): string | null {
+    return this.filterForm.get('filterType')?.value === 'cpf' ? '000.000.000-00' : null;
   }
-  get paginatedParticipants(): Participant[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredParticipants.slice(start, start + this.pageSize);
+
+  get visiblePages(): number[] {
+    const maxButtons = 7;
+    if (this.lastPage <= maxButtons) {
+      return Array.from({ length: this.lastPage }, (_, i) => i + 1);
+    }
+    let start = Math.max(1, this.currentPage - 3);
+    const end = Math.min(this.lastPage, start + maxButtons - 1);
+    start = Math.max(1, end - maxButtons + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.eventId = +idParam;
-      this.loadData();
+    if (!idParam) {
+      return;
     }
-  }
+    this.eventId = +idParam;
 
-  loadData() {
-    this.isLoading = true;
-
-    // Load event details
     this.eventService.getEventById(this.eventId).subscribe({
       next: (eventData) => {
         this.event = eventData;
@@ -63,20 +80,46 @@ export class ParticipantListComponent implements OnInit {
       },
     });
 
-    // Load participants
-    this.eventService.getEventParticipants(this.eventId).subscribe({
-      next: (data) => {
-        this.participants = data;
-        this.filteredParticipants = data;
-        this.isLoading = false;
-        this.currentPage = 1;
-      },
-      error: () => {
-        this.error = 'Erro ao carregar lista de inscritos.';
-        this.toastr.error('Não foi possível carregar a lista de inscritos.', 'Erro');
-        this.isLoading = false;
-      },
-    });
+    this.filterForm
+      .get('filterType')!
+      .valueChanges.subscribe(() => this.filterForm.get('search')!.setValue(''));
+
+    this.filterForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+        tap(() => (this.currentPage = 1)),
+      )
+      .subscribe(() => this.reload$.next());
+
+    this.reload$
+      .pipe(
+        tap(() => (this.isLoading = true)),
+        switchMap(() => {
+          const { search, filterType } = this.filterForm.value;
+          return this.eventService.getEventParticipants(this.eventId, {
+            page: this.currentPage,
+            search: search?.trim() || undefined,
+            filterType: filterType === 'all' ? undefined : filterType,
+          });
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          this.participants = response.data;
+          this.totalParticipants = response.total;
+          this.currentPage = response.current_page;
+          this.lastPage = response.last_page;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.error = 'Erro ao carregar lista de inscritos.';
+          this.toastr.error('Não foi possível carregar a lista de inscritos.', 'Erro');
+          this.isLoading = false;
+        },
+      });
+
+    this.reload$.next();
   }
 
   deleteParticipant(participantId: number): void {
@@ -84,16 +127,12 @@ export class ParticipantListComponent implements OnInit {
       this.deletingParticipantId = participantId;
       this.eventService.deleteParticipant(this.eventId, participantId).subscribe({
         next: () => {
-          this.participants = this.participants.filter((p) => p.id !== participantId);
-          this.filteredParticipants = this.filteredParticipants.filter(
-            (p) => p.id !== participantId,
-          );
           this.toastr.success('Participante removido com sucesso!', 'Sucesso');
           this.deletingParticipantId = null;
-          // Ajusta página se necessário
-          if (this.paginatedParticipants.length === 0 && this.currentPage > 1) {
+          if (this.participants.length === 1 && this.currentPage > 1) {
             this.currentPage--;
           }
+          this.reload$.next();
         },
         error: () => {
           this.toastr.error('Erro ao remover o participante.', 'Erro');
@@ -122,29 +161,9 @@ export class ParticipantListComponent implements OnInit {
     });
   }
 
-  onSearchTermChange(): void {
-    const term = this.searchTerm.trim().toLowerCase();
-    if (!term) {
-      this.filteredParticipants = this.participants;
-      this.currentPage = 1;
-      return;
-    }
-    this.filteredParticipants = this.participants.filter((p) => {
-      return (
-        (p.name && p.name.toLowerCase().includes(term)) ||
-        (p.email && p.email.toLowerCase().includes(term)) ||
-        (p.phone && p.phone.toLowerCase().includes(term)) ||
-        (p.document && p.document.toLowerCase().includes(term)) ||
-        (p.company && p.company.toLowerCase().includes(term)) ||
-        (p.position && p.position.toLowerCase().includes(term)) ||
-        (p.city && p.city.toLowerCase().includes(term))
-      );
-    });
-    this.currentPage = 1;
-  }
-
   goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
+    if (page < 1 || page > this.lastPage) return;
     this.currentPage = page;
+    this.reload$.next();
   }
 }

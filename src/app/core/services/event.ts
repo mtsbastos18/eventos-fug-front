@@ -1,9 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { EventModel } from '../../shared/models/event';
 import { Participant } from '../../shared/models/participant';
+import { PaginatedResponse } from '../../shared/models/pagination';
 import { Observable } from 'rxjs';
+
+export interface ParticipantFilters {
+  page?: number;
+  search?: string;
+  filterType?: 'name' | 'cpf' | 'email';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -56,8 +63,23 @@ export class EventService {
     return this.http.delete(`${this.apiUrl}/admin/events/${id}`);
   }
 
-  getEventParticipants(id: number): Observable<Participant[]> {
-    return this.http.get<Participant[]>(`${this.apiUrl}/admin/events/${id}/participants`);
+  getEventParticipants(
+    id: number,
+    filters: ParticipantFilters = {},
+  ): Observable<PaginatedResponse<Participant>> {
+    let params = new HttpParams().set('page', filters.page ?? 1);
+
+    if (filters.search) {
+      params = params.set('search', filters.search);
+    }
+    if (filters.filterType) {
+      params = params.set('filter_type', filters.filterType);
+    }
+
+    return this.http.get<PaginatedResponse<Participant>>(
+      `${this.apiUrl}/admin/events/${id}/participants`,
+      { params },
+    );
   }
 
   deleteParticipant(eventId: number, participantId: number): Observable<any> {
