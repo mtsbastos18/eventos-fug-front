@@ -86,6 +86,17 @@ export class EventService {
     return this.http.delete(`${this.apiUrl}/admin/events/${eventId}/participants/${participantId}`);
   }
 
+  checkinByToken(eventId: number, token: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/events/${eventId}/checkin`, { token });
+  }
+
+  checkinByParticipant(eventId: number, participantId: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/admin/events/${eventId}/participants/${participantId}/checkin`,
+      {},
+    );
+  }
+
   exportEventParticipants(eventId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/admin/events/${eventId}/participants/export`, {
       responseType: 'blob',

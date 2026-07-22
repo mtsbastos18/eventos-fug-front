@@ -5,6 +5,7 @@ import { LoginComponent } from './features/admin/login/login';
 import { DashboardComponent } from './features/admin/dashboard/dashboard';
 import { EventManagementComponent } from './features/admin/event-management/event-management';
 import { ParticipantListComponent } from './features/admin/participant-list/participant-list';
+import { CheckinComponent } from './features/admin/checkin/checkin';
 import { authGuard } from './core/guards/auth-guard';
 import { PastEventComponent } from './features/public/past-event/past-event';
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'events', component: EventManagementComponent },
       { path: 'events/:id/participants', component: ParticipantListComponent },
+      { path: 'events/:id/checkin', component: CheckinComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

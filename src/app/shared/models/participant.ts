@@ -9,4 +9,5 @@ export interface Participant {
   position?: string;
   city?: string;
   created_at?: string;
+  checked_in_at?: string | null;
 }

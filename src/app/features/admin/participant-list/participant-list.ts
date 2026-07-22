@@ -37,6 +37,7 @@ export class ParticipantListComponent implements OnInit {
   isLoading = true;
   error = '';
   deletingParticipantId: number | null = null;
+  checkingInParticipantId: number | null = null;
 
   filterForm: FormGroup = this.fb.group({
     search: [''],
@@ -140,6 +141,21 @@ export class ParticipantListComponent implements OnInit {
         },
       });
     }
+  }
+
+  checkinParticipant(participantId: number): void {
+    this.checkingInParticipantId = participantId;
+    this.eventService.checkinByParticipant(this.eventId, participantId).subscribe({
+      next: (res) => {
+        this.toastr.success(res?.message || 'Check-in confirmado!', 'Sucesso');
+        this.checkingInParticipantId = null;
+        this.reload$.next();
+      },
+      error: (err) => {
+        this.toastr.error(err?.error?.message || 'Erro ao confirmar check-in.', 'Erro');
+        this.checkingInParticipantId = null;
+      },
+    });
   }
 
   exportParticipants(): void {
