@@ -90,10 +90,14 @@ export class EventService {
     return this.http.post(`${this.apiUrl}/admin/events/${eventId}/checkin`, { token });
   }
 
-  checkinByParticipant(eventId: number, participantId: number): Observable<any> {
+  confirmParticipantEntry(
+    eventId: number,
+    participantId: number,
+    data: Partial<Participant>,
+  ): Observable<any> {
     return this.http.post(
       `${this.apiUrl}/admin/events/${eventId}/participants/${participantId}/checkin`,
-      {},
+      data,
     );
   }
 

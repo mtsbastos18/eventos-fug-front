@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
@@ -37,11 +37,24 @@ export class ParticipantListComponent implements OnInit {
   isLoading = true;
   error = '';
   deletingParticipantId: number | null = null;
-  checkingInParticipantId: number | null = null;
+
+  showConfirmEntryModal = false;
+  participantToConfirm: Participant | null = null;
+  isConfirmingEntry = false;
 
   filterForm: FormGroup = this.fb.group({
     search: [''],
     filterType: ['all'],
+  });
+
+  confirmEntryForm: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    phone: ['', Validators.required],
+    document: ['', Validators.required],
+    company: [''],
+    position: [''],
+    city: [''],
   });
 
   currentPage = 1;
@@ -143,19 +156,45 @@ export class ParticipantListComponent implements OnInit {
     }
   }
 
-  checkinParticipant(participantId: number): void {
-    this.checkingInParticipantId = participantId;
-    this.eventService.checkinByParticipant(this.eventId, participantId).subscribe({
-      next: (res) => {
-        this.toastr.success(res?.message || 'Check-in confirmado!', 'Sucesso');
-        this.checkingInParticipantId = null;
-        this.reload$.next();
-      },
-      error: (err) => {
-        this.toastr.error(err?.error?.message || 'Erro ao confirmar check-in.', 'Erro');
-        this.checkingInParticipantId = null;
-      },
+  openConfirmEntryModal(participant: Participant): void {
+    this.participantToConfirm = participant;
+    this.confirmEntryForm.reset({
+      name: participant.name,
+      email: participant.email,
+      phone: participant.phone,
+      document: participant.document,
+      company: participant.company ?? '',
+      position: participant.position ?? '',
+      city: participant.city ?? '',
     });
+    this.showConfirmEntryModal = true;
+  }
+
+  closeConfirmEntryModal(): void {
+    this.showConfirmEntryModal = false;
+    this.participantToConfirm = null;
+  }
+
+  submitConfirmEntry(): void {
+    if (this.confirmEntryForm.invalid || !this.participantToConfirm?.id) {
+      return;
+    }
+
+    this.isConfirmingEntry = true;
+    this.eventService
+      .confirmParticipantEntry(this.eventId, this.participantToConfirm.id, this.confirmEntryForm.value)
+      .subscribe({
+        next: (res) => {
+          this.toastr.success(res?.message || 'Entrada confirmada!', 'Sucesso');
+          this.isConfirmingEntry = false;
+          this.closeConfirmEntryModal();
+          this.reload$.next();
+        },
+        error: (err) => {
+          this.toastr.error(err?.error?.message || 'Erro ao confirmar entrada.', 'Erro');
+          this.isConfirmingEntry = false;
+        },
+      });
   }
 
   exportParticipants(): void {
