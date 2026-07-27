@@ -1,0 +1,39 @@
+.label--29x90 {
+    width: 90mm;
+    height: 29mm;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    padding: 1.5mm 3mm;
+    overflow: hidden;
+}
+
+.label__strip {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #4f4f4f;
+    white-space: nowrap;
+}
+
+.label__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5mm;
+    overflow: hidden;
+}
+
+.label__body > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+app-qr-code {
+    flex-shrink: 0;
+    line-height: 0;
+}

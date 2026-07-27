@@ -10,6 +10,13 @@ export interface ParticipantFilters {
   page?: number;
   search?: string;
   filterType?: 'name' | 'cpf' | 'email';
+  perPage?: number;
+  orderBy?: 'name' | 'latest';
+}
+
+export interface BulkCheckinResponse {
+  checked_in: number[];
+  already_checked_in: number[];
 }
 
 @Injectable({
@@ -75,6 +82,12 @@ export class EventService {
     if (filters.filterType) {
       params = params.set('filter_type', filters.filterType);
     }
+    if (filters.perPage) {
+      params = params.set('per_page', filters.perPage);
+    }
+    if (filters.orderBy) {
+      params = params.set('order_by', filters.orderBy);
+    }
 
     return this.http.get<PaginatedResponse<Participant>>(
       `${this.apiUrl}/admin/events/${id}/participants`,
@@ -98,6 +111,13 @@ export class EventService {
     return this.http.post(
       `${this.apiUrl}/admin/events/${eventId}/participants/${participantId}/checkin`,
       data,
+    );
+  }
+
+  bulkCheckin(eventId: number, participantIds: number[]): Observable<BulkCheckinResponse> {
+    return this.http.post<BulkCheckinResponse>(
+      `${this.apiUrl}/admin/events/${eventId}/participants/checkin-bulk`,
+      { participant_ids: participantIds },
     );
   }
 

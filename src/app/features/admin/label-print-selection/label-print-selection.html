@@ -1,0 +1,205 @@
+<app-navbar></app-navbar>
+
+<div class="min-h-screen bg-gray-100 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <a routerLink="/admin/events" class="text-green-600 hover:text-green-900 text-sm flex items-center mb-2">
+                    &larr; Voltar para Eventos
+                </a>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    Impressão de Etiquetas {{ event ? '- ' + event.title : '' }}
+                </h1>
+            </div>
+            <button (click)="openPrintPreview()" [disabled]="selectedCount === 0"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium shadow">
+                Imprimir | {{ selectedCount }}
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+
+            <!-- Painel de configuração -->
+            <aside class="bg-white shadow rounded-lg p-5 space-y-5 h-fit">
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Configurações</h2>
+
+                <div>
+                    <span class="block text-sm font-medium text-gray-700 mb-2">Campos personalizados</span>
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" [(ngModel)]="config.fields.company" (ngModelChange)="saveConfig()"
+                                class="rounded border-gray-300">
+                            Empresa
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" [(ngModel)]="config.fields.position" (ngModelChange)="saveConfig()"
+                                class="rounded border-gray-300">
+                            Cargo
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">Nome, nome do evento e QR code de check-in sempre aparecem
+                        na etiqueta.</p>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <label class="flex items-start gap-2 text-sm text-gray-700">
+                        <input type="checkbox" [(ngModel)]="config.checkinOnPrint" (ngModelChange)="saveConfig()"
+                            class="rounded border-gray-300 mt-0.5">
+                        <span>
+                            Fazer check-in ao imprimir
+                            <span class="block text-xs text-gray-400">Marca automaticamente como check-in
+                                realizado.</span>
+                        </span>
+                    </label>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Como imprimir o nome</label>
+                    <select [(ngModel)]="config.nameFormat" (ngModelChange)="saveConfig()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="full">Nome Completo</option>
+                        <option value="first">Primeiro Nome</option>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Útil quando o nome completo fica grande demais na etiqueta.
+                    </p>
+                </div>
+
+                <div>
+                    <span class="block text-sm font-medium text-gray-700 mb-2">Alinhamento do Texto</span>
+                    <div class="grid grid-cols-3 gap-1">
+                        <button type="button" (click)="config.align = 'left'; saveConfig()"
+                            [ngClass]="config.align === 'left' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                            class="px-2 py-1.5 rounded text-xs font-medium transition-colors">Esquerda</button>
+                        <button type="button" (click)="config.align = 'center'; saveConfig()"
+                            [ngClass]="config.align === 'center' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                            class="px-2 py-1.5 rounded text-xs font-medium transition-colors">Centro</button>
+                        <button type="button" (click)="config.align = 'right'; saveConfig()"
+                            [ngClass]="config.align === 'right' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                            class="px-2 py-1.5 rounded text-xs font-medium transition-colors">Direita</button>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 space-y-4">
+                    <span class="block text-sm font-medium text-gray-700">Tamanho das Fontes (mm)</span>
+
+                    <div>
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Nome</span>
+                            <span>{{ config.fontSizeMm.name }}mm</span>
+                        </div>
+                        <input type="range" min="2" max="8" step="0.5" [(ngModel)]="config.fontSizeMm.name"
+                            (ngModelChange)="saveConfig()" class="w-full accent-green-600">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Campos adicionais</span>
+                            <span>{{ config.fontSizeMm.extra }}mm</span>
+                        </div>
+                        <input type="range" min="1.5" max="5" step="0.5" [(ngModel)]="config.fontSizeMm.extra"
+                            (ngModelChange)="saveConfig()" class="w-full accent-green-600">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Nome do evento</span>
+                            <span>{{ config.fontSizeMm.eventName }}mm</span>
+                        </div>
+                        <input type="range" min="1" max="4" step="0.5" [(ngModel)]="config.fontSizeMm.eventName"
+                            (ngModelChange)="saveConfig()" class="w-full accent-green-600">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <span class="block text-sm font-medium text-gray-700 mb-2">Pré-visualização</span>
+                    <div class="flex justify-center bg-gray-100 rounded p-4">
+                        <div class="label label--29x90 bg-white border border-gray-300 shadow-sm"
+                            [style.text-align]="config.align">
+                            <div class="label__strip" [style.font-size.mm]="config.fontSizeMm.eventName">
+                                {{ event?.title || 'Nome do Evento' }}</div>
+                            <div class="label__body">
+                                <div [style.font-size.mm]="config.fontSizeMm.name">
+                                    {{ config.nameFormat === 'first' ? (previewParticipant.name.split(' ')[0]) :
+                                    previewParticipant.name }}
+                                </div>
+                                <div *ngIf="config.fields.company && previewParticipant.company"
+                                    [style.font-size.mm]="config.fontSizeMm.extra">{{ previewParticipant.company }}
+                                </div>
+                                <div *ngIf="config.fields.position && previewParticipant.position"
+                                    [style.font-size.mm]="config.fontSizeMm.extra">{{ previewParticipant.position }}
+                                </div>
+                            </div>
+                            <app-qr-code [value]="previewParticipant.checkin_token || 'preview'" [sizePx]="68"></app-qr-code>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-gray-400 mt-2">90 x 29 mm</p>
+                </div>
+            </aside>
+
+            <!-- Lista de participantes -->
+            <div>
+                <div class="bg-white shadow rounded-lg p-4 mb-4 flex flex-col sm:flex-row gap-2">
+                    <input type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()"
+                        placeholder="Buscar por nome, email ou CPF..."
+                        class="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <select [(ngModel)]="orderBy" (ngModelChange)="onOrderChange()"
+                        class="px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="latest">Mais recentes</option>
+                        <option value="name">Ordem Alfabética</option>
+                    </select>
+                </div>
+
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+                        <input type="checkbox" [checked]="allOnPageSelected" (change)="toggleSelectAllOnPage()"
+                            class="rounded border-gray-300">
+                        <span class="text-sm text-gray-600">Selecionar todos da página</span>
+                        <span class="text-sm text-gray-400 ml-auto">{{ totalParticipants }} participantes</span>
+                    </div>
+
+                    <div *ngIf="isLoading" class="flex justify-center p-10">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                    </div>
+
+                    <ul *ngIf="!isLoading" class="divide-y divide-gray-100">
+                        <li *ngFor="let participant of participants"
+                            class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                            (click)="toggleSelection(participant)">
+                            <input type="checkbox" [checked]="isSelected(participant)" (click)="$event.stopPropagation()"
+                                (change)="toggleSelection(participant)" class="rounded border-gray-300">
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-medium text-gray-900 truncate">{{ participant.name }}</div>
+                                <div class="text-xs text-gray-500 truncate">{{ participant.email }}</div>
+                            </div>
+                            <span *ngIf="participant.checked_in_at"
+                                class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium whitespace-nowrap">
+                                &check; Check-in
+                            </span>
+                        </li>
+
+                        <li *ngIf="participants.length === 0" class="px-4 py-8 text-center text-sm text-gray-500">
+                            Nenhum inscrito encontrado.
+                        </li>
+                    </ul>
+
+                    <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between"
+                        *ngIf="totalParticipants > 0">
+                        <div class="text-sm text-gray-600">Página {{ currentPage }} de {{ lastPage }}</div>
+                        <div class="flex gap-1">
+                            <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+                                class="px-3 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-sm font-medium text-gray-700 transition-colors">
+                                Anterior
+                            </button>
+                            <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === lastPage"
+                                class="px-3 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-sm font-medium text-gray-700 transition-colors">
+                                Próxima
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

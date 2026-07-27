@@ -6,6 +6,8 @@ import { DashboardComponent } from './features/admin/dashboard/dashboard';
 import { EventManagementComponent } from './features/admin/event-management/event-management';
 import { ParticipantListComponent } from './features/admin/participant-list/participant-list';
 import { CheckinComponent } from './features/admin/checkin/checkin';
+import { LabelPrintSelectionComponent } from './features/admin/label-print-selection/label-print-selection';
+import { LabelPrintPreviewComponent } from './features/admin/label-print-preview/label-print-preview';
 import { authGuard } from './core/guards/auth-guard';
 import { PastEventComponent } from './features/public/past-event/past-event';
 
@@ -22,6 +24,8 @@ export const routes: Routes = [
       { path: 'events', component: EventManagementComponent },
       { path: 'events/:id/participants', component: ParticipantListComponent },
       { path: 'events/:id/checkin', component: CheckinComponent },
+      { path: 'events/:id/labels', component: LabelPrintSelectionComponent },
+      { path: 'events/:id/labels/print', component: LabelPrintPreviewComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

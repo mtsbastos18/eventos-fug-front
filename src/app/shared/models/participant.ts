@@ -10,4 +10,5 @@ export interface Participant {
   city?: string;
   created_at?: string;
   checked_in_at?: string | null;
+  checkin_token?: string;
 }
