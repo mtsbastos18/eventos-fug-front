@@ -84,15 +84,7 @@ export class ParticipantListComponent implements OnInit {
     }
     this.eventId = +idParam;
 
-    this.eventService.getEventById(this.eventId).subscribe({
-      next: (eventData) => {
-        this.event = eventData;
-      },
-      error: () => {
-        this.error = 'Erro ao carregar detalhes do evento.';
-        this.toastr.error('Não foi possível carregar os detalhes do evento.', 'Erro');
-      },
-    });
+    this.loadEvent();
 
     this.filterForm
       .get('filterType')!
@@ -189,6 +181,7 @@ export class ParticipantListComponent implements OnInit {
           this.isConfirmingEntry = false;
           this.closeConfirmEntryModal();
           this.reload$.next();
+          this.loadEvent();
         },
         error: (err) => {
           this.toastr.error(err?.error?.message || 'Erro ao confirmar entrada.', 'Erro');
@@ -212,6 +205,18 @@ export class ParticipantListComponent implements OnInit {
       },
       error: () => {
         this.toastr.error('Erro ao exportar participantes.', 'Erro');
+      },
+    });
+  }
+
+  private loadEvent(): void {
+    this.eventService.getEventById(this.eventId).subscribe({
+      next: (eventData) => {
+        this.event = eventData;
+      },
+      error: () => {
+        this.error = 'Erro ao carregar detalhes do evento.';
+        this.toastr.error('Não foi possível carregar os detalhes do evento.', 'Erro');
       },
     });
   }

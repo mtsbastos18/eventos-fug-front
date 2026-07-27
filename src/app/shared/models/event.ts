@@ -8,6 +8,7 @@ export interface EventModel {
   capacity: number;
   image_path?: string;
   participants_count?: number;
+  checkin_count?: number;
   slug?: string;
   video_url?: string;
   gallery?: string[];
