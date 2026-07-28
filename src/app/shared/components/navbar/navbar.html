@@ -9,9 +9,7 @@
 
                 <ng-container *ngIf="authService.currentUser$ | async as user; else unauth">
                     <a routerLink="/admin/dashboard"
-                        class="text-white hover:text-orange font-medium transition-colors">Dashboard</a>
-                    <a routerLink="/admin/events"
-                        class="text-white hover:text-orange font-medium transition-colors">Gerenciar</a>
+                        class="text-white hover:text-orange font-medium transition-colors">Área Restrita</a>
                     <span class="ml-4 text-sm text-white">Olá, {{ user.name }}</span>
                     <button (click)="logout()"
                         class="bg-red-800 text-white hover:bg-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">

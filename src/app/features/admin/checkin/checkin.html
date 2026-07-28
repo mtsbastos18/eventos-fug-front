@@ -1,7 +1,5 @@
-<app-navbar></app-navbar>
-
 <div class="min-h-screen bg-gray-100 py-10">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
     <a [routerLink]="['/admin/events', eventId, 'participants']"
       class="text-green-600 hover:text-green-900 text-sm flex items-center mb-2">
@@ -12,19 +10,12 @@
     </h1>
     <p class="text-sm text-gray-500 mb-6">Aponte a câmera para o QR Code recebido por e-mail pelo participante.</p>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-white shadow rounded-lg overflow-hidden max-w-4xl max-h-full 5 mx-auto">
       <div class="relative bg-black">
-        <zxing-scanner
-          [formats]="allowedFormats"
-          [enable]="!isProcessing"
-          [device]="currentDevice"
-          previewFitMode="cover"
-          (camerasFound)="onCamerasFound($event)"
-          (camerasNotFound)="onCamerasNotFound()"
-          (permissionResponse)="onPermissionResponse($event)"
-          (scanSuccess)="onScanSuccess($event)"
-          class="block w-full aspect-square"
-        ></zxing-scanner>
+        <zxing-scanner [formats]="allowedFormats" [enable]="!isProcessing" [device]="currentDevice"
+          previewFitMode="cover" (camerasFound)="onCamerasFound($event)" (camerasNotFound)="onCamerasNotFound()"
+          (permissionResponse)="onPermissionResponse($event)" (scanSuccess)="onScanSuccess($event)"
+          class="block w-full aspect-square"></zxing-scanner>
 
         <div *ngIf="isProcessing"
           class="absolute inset-0 flex items-center justify-center bg-black/50 text-white text-sm font-medium">
@@ -35,7 +26,8 @@
       <div class="p-4">
         <div *ngIf="!hasCameraPermission" class="bg-red-100 text-red-700 p-3 rounded text-sm mb-3">
           Permissão de câmera negada. Utilize o check-in manual na
-          <a [routerLink]="['/admin/events', eventId, 'participants']" class="underline font-medium">listagem de inscritos</a>.
+          <a [routerLink]="['/admin/events', eventId, 'participants']" class="underline font-medium">listagem de
+            inscritos</a>.
         </div>
         <div *ngIf="!hasDevices" class="bg-red-100 text-red-700 p-3 rounded text-sm mb-3">
           Nenhuma câmera disponível neste dispositivo.
@@ -43,23 +35,20 @@
 
         <div *ngIf="availableDevices.length > 1" class="flex items-center gap-2">
           <label class="text-sm text-gray-600">Câmera:</label>
-          <select
-            class="px-2 py-1 border border-gray-300 rounded text-sm"
-            [ngModel]="currentDevice"
-            (ngModelChange)="currentDevice = $event"
-            name="device"
-          >
+          <select class="px-2 py-1 border border-gray-300 rounded text-sm" [ngModel]="currentDevice"
+            (ngModelChange)="currentDevice = $event" name="device">
             <option *ngFor="let device of availableDevices" [ngValue]="device">
               {{ device.label || 'Câmera' }}
             </option>
           </select>
         </div>
 
-        <div *ngIf="lastCheckin"
-          class="mt-3 p-3 rounded text-sm"
+        <div *ngIf="lastCheckin" class="mt-3 p-3 rounded text-sm"
           [ngClass]="lastCheckin.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
-          <span *ngIf="lastCheckin.success">Entrada confirmada{{ lastCheckin.name ? ' — ' + lastCheckin.name : '' }}.</span>
-          <span *ngIf="!lastCheckin.success">Check-in não realizado{{ lastCheckin.name ? ' — ' + lastCheckin.name : '' }}.</span>
+          <span *ngIf="lastCheckin.success">Entrada confirmada{{ lastCheckin.name ? ' — ' + lastCheckin.name : ''
+            }}.</span>
+          <span *ngIf="!lastCheckin.success">Check-in não realizado{{ lastCheckin.name ? ' — ' + lastCheckin.name : ''
+            }}.</span>
         </div>
       </div>
     </div>

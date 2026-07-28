@@ -10,6 +10,7 @@ import { LabelPrintSelectionComponent } from './features/admin/label-print-selec
 import { LabelPrintPreviewComponent } from './features/admin/label-print-preview/label-print-preview';
 import { authGuard } from './core/guards/auth-guard';
 import { PastEventComponent } from './features/public/past-event/past-event';
+import { AdminLayoutComponent } from './shared/components/admin-layout/admin-layout';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -20,13 +21,20 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'events', component: EventManagementComponent },
-      { path: 'events/:id/participants', component: ParticipantListComponent },
-      { path: 'events/:id/checkin', component: CheckinComponent },
-      { path: 'events/:id/labels', component: LabelPrintSelectionComponent },
+      {
+        path: '',
+        component: AdminLayoutComponent,
+        children: [
+          { path: 'dashboard', component: DashboardComponent },
+          { path: 'events', component: EventManagementComponent },
+          { path: 'events/:id/participants', component: ParticipantListComponent },
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          { path: 'events/:id/checkin', component: CheckinComponent },
+          { path: 'events/:id/labels', component: LabelPrintSelectionComponent },
+        ],
+      },
+
       { path: 'events/:id/labels/print', component: LabelPrintPreviewComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -1,31 +1,34 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { QuillModule } from 'ngx-quill';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { Subject, switchMap } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { EventService } from '../../../core/services/event';
 import { Participant } from '../../../shared/models/participant';
 import { EventModel } from '../../../shared/models/event';
-import { NavbarComponent } from '../../../shared/components/navbar/navbar';
+import { EventFormModalComponent } from '../event-form-modal/event-form-modal';
 
 @Component({
   selector: 'app-participant-list',
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NavbarComponent,
     RouterLink,
     NgxMaskPipe,
     NgxMaskDirective,
+    QuillModule,
+    EventFormModalComponent,
   ],
   templateUrl: './participant-list.html',
   styleUrl: './participant-list.css',
 })
 export class ParticipantListComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private eventService = inject(EventService);
   private toastr = inject(ToastrService);
   private fb = inject(FormBuilder);
@@ -41,6 +44,19 @@ export class ParticipantListComponent implements OnInit {
   showConfirmEntryModal = false;
   participantToConfirm: Participant | null = null;
   isConfirmingEntry = false;
+
+  showEditEventModal = false;
+
+  showPostEventForm = false;
+  isSubmittingPostEvent = false;
+  selectedVideo: File | null = null;
+  selectedImages: File[] = [];
+
+  postEventForm: FormGroup = this.fb.group({
+    description: ['', Validators.required],
+    flickrUrl: ['', [Validators.pattern('https?://(www.)?flickr.com/.*')]],
+    youtube_video_url: ['', [Validators.pattern('https?://(www.)?youtube.com/.*')]],
+  });
 
   filterForm: FormGroup = this.fb.group({
     search: [''],
@@ -225,5 +241,107 @@ export class ParticipantListComponent implements OnInit {
     if (page < 1 || page > this.lastPage) return;
     this.currentPage = page;
     this.reload$.next();
+  }
+
+  openEditEventModal(): void {
+    this.showEditEventModal = true;
+  }
+
+  closeEditEventModal(): void {
+    this.showEditEventModal = false;
+  }
+
+  onEventSaved(): void {
+    this.showEditEventModal = false;
+    this.loadEvent();
+  }
+
+  deleteEventAndExit(): void {
+    if (!this.event) return;
+    if (!confirm('Tem certeza que deseja excluir este evento? Essa ação não pode ser desfeita.')) {
+      return;
+    }
+    this.eventService.deleteEvent(this.eventId).subscribe({
+      next: () => {
+        this.toastr.success('Evento excluído com sucesso!', 'Sucesso');
+        this.router.navigate(['/admin/events']);
+      },
+      error: () => this.toastr.error('Erro ao excluir evento.', 'Erro'),
+    });
+  }
+
+  openPostEventForm(): void {
+    if (!this.event) return;
+    this.postEventForm.reset();
+
+    this.eventService.getPostEventDetails(this.eventId.toString()).subscribe({
+      next: (response) => {
+        this.postEventForm.patchValue({
+          description: response.description || '',
+          flickrUrl: '',
+          youtube_video_url: response.youtube_video_url || '',
+        });
+        this.selectedVideo = null;
+        this.selectedImages = [];
+        this.showPostEventForm = true;
+      },
+      error: () => {
+        this.selectedVideo = null;
+        this.selectedImages = [];
+        this.showPostEventForm = true;
+      },
+    });
+  }
+
+  closePostEventForm(): void {
+    this.showPostEventForm = false;
+    this.selectedVideo = null;
+    this.selectedImages = [];
+    this.postEventForm.reset();
+  }
+
+  onVideoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedVideo = file;
+    }
+  }
+
+  onImagesSelected(event: Event): void {
+    const files = (event.target as HTMLInputElement).files;
+    if (files) {
+      this.selectedImages = Array.from(files);
+    }
+  }
+
+  onSubmitPostEvent(): void {
+    if (this.postEventForm.invalid || !this.eventId) return;
+
+    this.isSubmittingPostEvent = true;
+    const formData = new FormData();
+
+    formData.append('description', this.postEventForm.get('description')?.value);
+    formData.append('flickrUrl', this.postEventForm.get('flickrUrl')?.value);
+    if (this.postEventForm.get('youtube_video_url')?.value) {
+      formData.append('youtube_video_url', this.postEventForm.get('youtube_video_url')?.value);
+    }
+    if (this.selectedVideo) {
+      formData.append('video', this.selectedVideo);
+    }
+    this.selectedImages.forEach((image) => {
+      formData.append('images[]', image);
+    });
+
+    this.eventService.savePostEventDetail(this.eventId, formData).subscribe({
+      next: () => {
+        this.isSubmittingPostEvent = false;
+        this.toastr.success('Detalhes pós-evento salvos com sucesso!', 'Sucesso');
+        this.closePostEventForm();
+      },
+      error: () => {
+        this.isSubmittingPostEvent = false;
+        this.toastr.error('Erro ao salvar os detalhes do evento.', 'Erro');
+      },
+    });
   }
 }

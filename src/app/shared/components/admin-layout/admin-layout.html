@@ -1,0 +1,85 @@
+<div class="min-h-screen bg-gray-100">
+
+    <!-- Sidebar (desktop) -->
+    <aside class="hidden md:flex md:flex-col w-64 bg-green-600 border-r border-gray-200 fixed inset-y-0 z-30">
+        <div class="h-16 flex items-center justify-center px-6 text-center  border-gray-200">
+            <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-10">
+        </div>
+
+        <nav class="flex-1 px-3 py-4 space-y-1">
+            <a routerLink="/admin/dashboard" routerLinkActive="bg-green-50 text-gray-900"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white  hover:bg-gray-50 hover:text-red-700 transition-colors">
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Dashboard
+            </a>
+            <a routerLink="/admin/events" routerLinkActive="bg-green-50 text-gray-900"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Meus Eventos
+            </a>
+        </nav>
+
+        <div class="px-3 py-4 ">
+            <p class="px-3 text-sm text-white truncate">
+                Olá, {{ (authService.currentUser$ | async)?.name }}
+            </p>
+            <button (click)="logout()"
+                class="mt-2 w-full text-left px-3 py-2 rounded-md text-sm border-2 border-white font-medium text-white hover:bg-red-50 hover:text-red-700 transition-colors">
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Topbar (mobile) -->
+    <header
+        class="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3">
+        <button (click)="mobileOpen = !mobileOpen" class="text-gray-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-8">
+    </header>
+
+    <!-- Drawer (mobile) -->
+    <div *ngIf="mobileOpen" class="md:hidden fixed inset-0 z-50 flex">
+        <div class="fixed inset-0 bg-gray-900/50" (click)="mobileOpen = false"></div>
+        <aside class="relative w-64 bg-green-600 h-full flex flex-col shadow-xl">
+            <div class="h-16 flex items-center px-6  border-gray-200">
+                <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-10">
+            </div>
+            <nav class="flex-1 px-3 py-4 space-y-1">
+                <a routerLink="/admin/dashboard" routerLinkActive="bg-green-50 text-gray-900"
+                    [routerLinkActiveOptions]="{ exact: true }" (click)="mobileOpen = false"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
+                    Dashboard
+                </a>
+                <a routerLink="/admin/events" routerLinkActive="bg-green-50 text-gray-900" (click)="mobileOpen = false"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
+                    Meus Eventos
+                </a>
+            </nav>
+            <div class="px-3 py-4 ">
+                <p class="px-3 text-sm text-white truncate">
+                    Olá, {{ (authService.currentUser$ | async)?.name }}
+                </p>
+                <button (click)="logout()"
+                    class="mt-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-red-700 hover:bg-red-50 transition-colors">
+                    Sair
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <main class="md:ml-64 pt-14 md:pt-0">
+        <router-outlet></router-outlet>
+    </main>
+
+</div>
