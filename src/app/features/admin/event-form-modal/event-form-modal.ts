@@ -31,6 +31,7 @@ export class EventFormModalComponent implements OnChanges {
     date: ['', Validators.required],
     location: ['', Validators.required],
     capacity: ['', [Validators.required, Validators.min(1)]],
+    workload_hours: ['', [Validators.min(1)]],
     image: [null],
   });
 
@@ -56,6 +57,7 @@ export class EventFormModalComponent implements OnChanges {
         date: dateFormatted,
         location: this.eventToEdit.location,
         capacity: this.eventToEdit.capacity,
+        workload_hours: this.eventToEdit.workload_hours ?? '',
         image: null,
       });
     } else {

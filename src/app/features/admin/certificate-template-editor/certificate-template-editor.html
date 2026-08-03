@@ -1,0 +1,240 @@
+<div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <a [routerLink]="['/admin/events', eventId, 'participants']"
+                class="text-green-600 hover:text-green-900 text-sm flex items-center mb-2">
+                &larr; Voltar para Inscritos
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900">
+                Matriz do Certificado {{ event ? '- ' + event.title : '' }}
+            </h1>
+            <p class="text-sm text-gray-500 mt-1">
+                <span *ngIf="isPublished" class="text-green-700 font-medium">✓ Matriz publicada</span>
+                <span *ngIf="!isPublished" class="text-yellow-700 font-medium">Rascunho não publicado</span>
+            </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap justify-end">
+            <button (click)="openCopyModal()"
+                class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow">
+                Copiar de outro evento
+            </button>
+            <button (click)="preview()" [disabled]="isPreviewing"
+                class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow disabled:opacity-50">
+                {{ isPreviewing ? 'Gerando...' : 'Pré-visualizar' }}
+            </button>
+            <button (click)="saveDraft()" [disabled]="isSavingDraft"
+                class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow disabled:opacity-50">
+                {{ isSavingDraft ? 'Salvando...' : 'Salvar rascunho' }}
+            </button>
+            <button (click)="publish()" [disabled]="isPublishing"
+                class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-xs font-medium shadow disabled:bg-green-300">
+                {{ isPublishing ? 'Publicando...' : 'Publicar matriz' }}
+            </button>
+            <button (click)="deleteTemplate()" [disabled]="isDeleting"
+                class="px-3 py-1 bg-white border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors text-xs font-medium shadow disabled:opacity-50">
+                {{ isDeleting ? 'Excluindo...' : 'Excluir matriz' }}
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading" class="flex justify-center p-10">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+    </div>
+
+    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Canvas -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded shadow p-4 mb-3 flex items-center gap-3 flex-wrap">
+                <label class="text-sm font-medium text-gray-700">Arte de fundo:</label>
+                <input type="file" accept="image/png,image/jpeg" (change)="onBackgroundSelected($event)"
+                    class="text-sm">
+                <label class="ml-auto flex items-center gap-2 text-sm text-gray-700">
+                    Orientação:
+                    <button (click)="toggleOrientation()"
+                        class="px-2 py-1 border border-gray-300 rounded text-xs hover:bg-gray-50">
+                        {{ orientation === 'landscape' ? 'Paisagem' : 'Retrato' }}
+                    </button>
+                </label>
+            </div>
+
+            <div #canvas class="relative w-full bg-gray-200 rounded shadow overflow-hidden select-none"
+                [style.aspect-ratio]="aspectRatio"
+                [style.background-image]="displayBackgroundUrl ? 'url(' + displayBackgroundUrl + ')' : 'none'"
+                style="background-size: 100% 100%; background-repeat: no-repeat;" (pointermove)="onCanvasPointerMove($event)"
+                (pointerup)="onCanvasPointerUp()" (pointerleave)="onCanvasPointerUp()">
+
+                <div *ngIf="!displayBackgroundUrl"
+                    class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+                    Envie uma arte de fundo (PNG ou JPG)
+                </div>
+
+                <div *ngFor="let field of fields" (pointerdown)="onFieldPointerDown($event, field)"
+                    class="absolute cursor-move px-1 whitespace-pre-wrap"
+                    [class.ring-2]="field.id === selectedFieldId" [class.ring-blue-500]="field.id === selectedFieldId"
+                    [style.left.%]="field.x" [style.top.%]="field.y" [style.width.%]="field.width"
+                    [style.transform]="fieldTransform(field.align)" [style.text-align]="field.align || 'left'"
+                    [style.font-size.px]="fieldFontSizePx(field)" [style.font-weight]="field.font_weight || 'normal'"
+                    [style.color]="field.color || '#000'"
+                    [style.text-transform]="field.uppercase ? 'uppercase' : 'none'"
+                    [style.font-family]="field.font_family || 'helvetica'">
+                    {{ fieldPreviewText(field) }}
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+                Arraste os campos sobre a arte para posicioná-los. Esta prévia é aproximada — use
+                "Pré-visualizar" para conferir o PDF real antes de publicar.
+            </p>
+        </div>
+
+        <!-- Inspetor -->
+        <div class="lg:col-span-1 space-y-4">
+            <div class="bg-white rounded shadow p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-gray-900">Campos</h2>
+                    <div class="flex gap-2">
+                        <button (click)="addVariableField()"
+                            class="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">
+                            + Variável
+                        </button>
+                        <button (click)="addTextField()"
+                            class="px-2 py-1 bg-white border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50">
+                            + Texto
+                        </button>
+                    </div>
+                </div>
+
+                <ul class="space-y-1 max-h-40 overflow-y-auto">
+                    <li *ngFor="let field of fields" (click)="selectField(field.id)"
+                        class="flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer"
+                        [class.bg-blue-50]="field.id === selectedFieldId"
+                        [class.text-blue-700]="field.id === selectedFieldId">
+                        <span class="truncate">{{ isTextField(field) ? 'Texto: ' + (field.text || '') :
+                            'Variável: ' + field.variable }}</span>
+                        <button (click)="removeField(field.id); $event.stopPropagation()"
+                            class="text-red-500 hover:text-red-700 text-xs ml-2">✕</button>
+                    </li>
+                    <li *ngIf="fields.length === 0" class="text-sm text-gray-400 px-2 py-1">
+                        Nenhum campo adicionado ainda.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded shadow p-4" *ngIf="selectedField as field">
+                <h2 class="text-sm font-semibold text-gray-900 mb-3">Propriedades do campo</h2>
+
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Tipo</label>
+                    <div class="flex gap-2">
+                        <button (click)="setFieldKind(field, 'variable')"
+                            class="flex-1 px-2 py-1 rounded text-xs border"
+                            [class.bg-green-600]="!isTextField(field)" [class.text-white]="!isTextField(field)"
+                            [class.border-green-600]="!isTextField(field)">
+                            Variável
+                        </button>
+                        <button (click)="setFieldKind(field, 'text')" class="flex-1 px-2 py-1 rounded text-xs border"
+                            [class.bg-green-600]="isTextField(field)" [class.text-white]="isTextField(field)"
+                            [class.border-green-600]="isTextField(field)">
+                            Texto livre
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3" *ngIf="!isTextField(field)">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Variável</label>
+                    <select [(ngModel)]="field.variable"
+                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option *ngFor="let v of variables" [value]="v.value">{{ v.label }}</option>
+                    </select>
+                </div>
+
+                <div class="mb-3" *ngIf="isTextField(field)">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                        Texto (use {{ '{{variavel}}' }} para inserir dados)
+                    </label>
+                    <textarea [(ngModel)]="field.text" rows="3"
+                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Tamanho da fonte (pt)</label>
+                        <input type="number" min="6" max="120" [(ngModel)]="field.font_size"
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Largura (%)</label>
+                        <input type="number" min="5" max="100" [(ngModel)]="field.width"
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Fonte</label>
+                        <select [(ngModel)]="field.font_family"
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                            <option *ngFor="let f of fontFamilies" [value]="f">{{ f }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Peso</label>
+                        <select [(ngModel)]="field.font_weight"
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                            <option value="normal">Normal</option>
+                            <option value="bold">Negrito</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Alinhamento</label>
+                        <select [(ngModel)]="field.align"
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                            <option value="left">Esquerda</option>
+                            <option value="center">Centro</option>
+                            <option value="right">Direita</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Cor</label>
+                        <input type="color" [(ngModel)]="field.color" class="w-full h-8 border border-gray-300 rounded">
+                    </div>
+                </div>
+
+                <label class="flex items-center gap-2 text-xs text-gray-700">
+                    <input type="checkbox" [(ngModel)]="field.uppercase">
+                    Caixa alta (maiúsculas)
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: copiar de outro evento -->
+<div *ngIf="showCopyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 px-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+        <div class="px-6 py-4 bg-green-600 text-white flex justify-between items-center">
+            <h3 class="text-lg font-semibold">Copiar matriz de outro evento</h3>
+            <button (click)="closeCopyModal()" class="text-white hover:text-green-200">✕</button>
+        </div>
+        <div class="px-6 py-4 max-h-96 overflow-y-auto">
+            <div *ngIf="isLoadingOtherEvents" class="flex justify-center p-6">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+            </div>
+            <ul *ngIf="!isLoadingOtherEvents" class="divide-y divide-gray-200">
+                <li *ngFor="let ev of otherEvents" class="py-2 flex items-center justify-between gap-2">
+                    <span class="text-sm text-gray-800 truncate">{{ ev.title }}</span>
+                    <button (click)="copyFrom(ev)" [disabled]="isCopying"
+                        class="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 disabled:opacity-50 shrink-0">
+                        Copiar
+                    </button>
+                </li>
+                <li *ngIf="otherEvents.length === 0" class="py-4 text-sm text-gray-400 text-center">
+                    Nenhum outro evento disponível.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -6,6 +6,7 @@ export interface EventModel {
   date: string;
   location: string;
   capacity: number;
+  workload_hours?: number;
   image_path?: string;
   participants_count?: number;
   checkin_count?: number;

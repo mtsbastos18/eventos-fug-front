@@ -38,6 +38,14 @@
                 class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow">
                 Imprimir Etiquetas
             </a>
+            <a *ngIf="event" [routerLink]="['/admin/events', eventId, 'certificate']"
+                class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow">
+                Certificado
+            </a>
+            <a *ngIf="event" [routerLink]="['/admin/events', eventId, 'certificates']"
+                class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-xs font-medium shadow">
+                Enviar Certificados
+            </a>
             <button *ngIf="event" (click)="exportParticipants()"
                 class="px-3 py-1 bg-green-600 text-white rounded hover:bg-blue-700 transition-colors text-xs font-medium shadow">
                 Exportar
