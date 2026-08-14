@@ -16,6 +16,7 @@ import {
   LABEL_PRINT_JOB_STORAGE_KEY,
   LabelConfig,
   LabelPrintJob,
+  loadLabelPrintConfig,
 } from '../../../shared/models/label-print';
 
 const EXAMPLE_PARTICIPANT: Participant = {
@@ -163,20 +164,7 @@ export class LabelPrintSelectionComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    const raw = localStorage.getItem(LABEL_PRINT_CONFIG_STORAGE_KEY);
-    if (!raw) return;
-    try {
-      const saved = JSON.parse(raw);
-      this.config = {
-        fields: { ...DEFAULT_LABEL_CONFIG.fields, ...saved.fields },
-        fontSizeMm: { ...DEFAULT_LABEL_CONFIG.fontSizeMm, ...saved.fontSizeMm },
-        align: saved.align ?? DEFAULT_LABEL_CONFIG.align,
-        nameFormat: saved.nameFormat ?? DEFAULT_LABEL_CONFIG.nameFormat,
-        checkinOnPrint: saved.checkinOnPrint ?? DEFAULT_LABEL_CONFIG.checkinOnPrint,
-      };
-    } catch {
-      // Preferências corrompidas no localStorage: ignora e mantém os defaults.
-    }
+    this.config = loadLabelPrintConfig();
   }
 
   openPrintPreview(): void {

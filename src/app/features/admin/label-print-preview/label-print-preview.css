@@ -11,9 +11,9 @@
     padding: 6mm;
 }
 
-.label--29x90 {
+.label--29x90,
+.label--38x90 {
     width: 90mm;
-    height: 29mm;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -23,6 +23,14 @@
     background: #fff;
     border: 1px solid #d1d5db;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.label--29x90 {
+    height: 29mm;
+}
+
+.label--38x90 {
+    height: 38mm;
 }
 
 .label__strip {
@@ -49,6 +57,15 @@
     text-overflow: ellipsis;
 }
 
+.label__body > .label__name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.15;
+}
+
 app-qr-code {
     flex-shrink: 0;
     line-height: 0;
@@ -64,6 +81,19 @@ app-qr-code {
         margin: 0;
     }
 
+    /* Páginas nomeadas: cada job de impressão usa um único tamanho de etiqueta
+       (config.labelSize), então isso nunca mistura formatos num mesmo PDF —
+       só garante que o @page bata com o formato escolhido naquele job. */
+    @page label-29x90 {
+        size: 90mm 29mm;
+        margin: 0;
+    }
+
+    @page label-38x90 {
+        size: 90mm 38mm;
+        margin: 0;
+    }
+
     .print-hide {
         display: none !important;
     }
@@ -73,9 +103,26 @@ app-qr-code {
         gap: 0;
     }
 
-    .label--29x90 {
+    .label--29x90,
+    .label--38x90 {
         border: none;
         box-shadow: none;
+    }
+
+    .label--29x90 {
+        page: label-29x90;
+    }
+
+    .label--38x90 {
+        page: label-38x90;
+    }
+
+    .label--29x90:not(:last-child),
+    .label--38x90:not(:last-child) {
         break-after: page;
+    }
+
+    app-qr-code {
+        display: none !important;
     }
 }

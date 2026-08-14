@@ -22,16 +22,19 @@
     </header>
 
     <main class="label-print-grid">
-        <div class="label label--29x90" *ngFor="let p of participants" [style.text-align]="config?.align">
+        <div class="label" *ngFor="let p of participants"
+            [class.label--29x90]="(config?.labelSize || '29x90') === '29x90'"
+            [class.label--38x90]="config?.labelSize === '38x90'"
+            [style.text-align]="config?.align">
             <div class="label__strip" [style.font-size.mm]="config?.fontSizeMm?.eventName">{{ eventTitle }}</div>
             <div class="label__body">
-                <div [style.font-size.mm]="config?.fontSizeMm?.name">{{ displayName(p) }}</div>
+                <div class="label__name" [style.font-size.mm]="config?.fontSizeMm?.name">{{ displayName(p) }}</div>
                 <div *ngIf="config?.fields?.company && p.company" [style.font-size.mm]="config?.fontSizeMm?.extra">
                     {{ p.company }}</div>
                 <div *ngIf="config?.fields?.position && p.position" [style.font-size.mm]="config?.fontSizeMm?.extra">
                     {{ p.position }}</div>
             </div>
-            <app-qr-code [value]="p.checkin_token || ''" [sizePx]="68"></app-qr-code>
+            <!-- <app-qr-code [value]="p.checkin_token || ''" [sizePx]="68"></app-qr-code> -->
         </div>
     </main>
 </ng-container>

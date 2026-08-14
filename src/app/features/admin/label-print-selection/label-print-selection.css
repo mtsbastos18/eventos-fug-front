@@ -1,12 +1,20 @@
-.label--29x90 {
+.label--29x90,
+.label--38x90 {
     width: 90mm;
-    height: 29mm;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 2mm;
     padding: 1.5mm 3mm;
     overflow: hidden;
+}
+
+.label--29x90 {
+    height: 29mm;
+}
+
+.label--38x90 {
+    height: 38mm;
 }
 
 .label__strip {
@@ -31,6 +39,15 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.label__body > .label__name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.15;
 }
 
 app-qr-code {

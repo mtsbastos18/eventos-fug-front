@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { QuillModule } from 'ngx-quill';
@@ -11,12 +11,20 @@ import { EventService } from '../../../core/services/event';
 import { Participant } from '../../../shared/models/participant';
 import { EventModel } from '../../../shared/models/event';
 import { EventFormModalComponent } from '../event-form-modal/event-form-modal';
+import {
+  LABEL_PRINT_CONFIG_STORAGE_KEY,
+  LABEL_PRINT_JOB_STORAGE_KEY,
+  LabelConfig,
+  LabelPrintJob,
+  loadLabelPrintConfig,
+} from '../../../shared/models/label-print';
 
 @Component({
   selector: 'app-participant-list',
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     NgxMaskPipe,
     NgxMaskDirective,
@@ -44,6 +52,7 @@ export class ParticipantListComponent implements OnInit {
   showConfirmEntryModal = false;
   participantToConfirm: Participant | null = null;
   isConfirmingEntry = false;
+  labelConfig: LabelConfig = loadLabelPrintConfig();
 
   showEditEventModal = false;
 
@@ -175,7 +184,12 @@ export class ParticipantListComponent implements OnInit {
       position: participant.position ?? '',
       city: participant.city ?? '',
     });
+    this.labelConfig = loadLabelPrintConfig();
     this.showConfirmEntryModal = true;
+  }
+
+  saveLabelConfig(): void {
+    localStorage.setItem(LABEL_PRINT_CONFIG_STORAGE_KEY, JSON.stringify(this.labelConfig));
   }
 
   closeConfirmEntryModal(): void {
@@ -204,6 +218,27 @@ export class ParticipantListComponent implements OnInit {
           this.isConfirmingEntry = false;
         },
       });
+  }
+
+  printParticipantLabel(): void {
+    if (!this.participantToConfirm || !this.event) return;
+
+    const formValue = this.confirmEntryForm.value;
+    const job: LabelPrintJob = {
+      eventId: this.eventId,
+      eventTitle: this.event.title,
+      participants: [
+        {
+          ...this.participantToConfirm,
+          name: formValue.name || this.participantToConfirm.name,
+          company: formValue.company,
+          position: formValue.position,
+        },
+      ],
+      config: this.labelConfig,
+    };
+    sessionStorage.setItem(LABEL_PRINT_JOB_STORAGE_KEY, JSON.stringify(job));
+    window.open(`/admin/events/${this.eventId}/labels/print`, '_blank');
   }
 
   exportParticipants(): void {

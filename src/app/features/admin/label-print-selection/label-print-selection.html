@@ -24,6 +24,15 @@
                 <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Configurações</h2>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tamanho da Etiqueta</label>
+                    <select [(ngModel)]="config.labelSize" (ngModelChange)="saveConfig()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="29x90">29 x 90 mm</option>
+                        <option value="38x90">38 x 90 mm</option>
+                    </select>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
                     <span class="block text-sm font-medium text-gray-700 mb-2">Campos personalizados</span>
                     <div class="flex flex-col gap-2">
                         <label class="flex items-center gap-2 text-sm text-gray-700">
@@ -113,12 +122,14 @@
                 <div class="border-t border-gray-100 pt-4">
                     <span class="block text-sm font-medium text-gray-700 mb-2">Pré-visualização</span>
                     <div class="flex justify-center bg-gray-100 rounded p-4">
-                        <div class="label label--29x90 bg-white border border-gray-300 shadow-sm"
+                        <div class="label bg-white border border-gray-300 shadow-sm"
+                            [class.label--29x90]="config.labelSize === '29x90'"
+                            [class.label--38x90]="config.labelSize === '38x90'"
                             [style.text-align]="config.align">
                             <div class="label__strip" [style.font-size.mm]="config.fontSizeMm.eventName">
                                 {{ event?.title || 'Nome do Evento' }}</div>
                             <div class="label__body">
-                                <div [style.font-size.mm]="config.fontSizeMm.name">
+                                <div class="label__name" [style.font-size.mm]="config.fontSizeMm.name">
                                     {{ config.nameFormat === 'first' ? (previewParticipant.name.split(' ')[0]) :
                                     previewParticipant.name }}
                                 </div>
@@ -129,11 +140,12 @@
                                     [style.font-size.mm]="config.fontSizeMm.extra">{{ previewParticipant.position }}
                                 </div>
                             </div>
-                            <app-qr-code [value]="previewParticipant.checkin_token || 'preview'"
-                                [sizePx]="68"></app-qr-code>
+                            <!-- <app-qr-code [value]="previewParticipant.checkin_token || 'preview'"
+                                [sizePx]="68"></app-qr-code> -->
                         </div>
                     </div>
-                    <p class="text-center text-xs text-gray-400 mt-2">90 x 29 mm</p>
+                    <p class="text-center text-xs text-gray-400 mt-2">
+                        {{ config.labelSize === '38x90' ? '90 x 38 mm' : '90 x 29 mm' }}</p>
                 </div>
             </aside>
 
