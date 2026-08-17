@@ -244,6 +244,29 @@
                             </select>
                         </div>
                         <div>
+                            <span class="block text-xs text-gray-500 mb-1">Campos na etiqueta</span>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="flex items-center gap-1.5 text-sm text-gray-700">
+                                    <input type="checkbox" [(ngModel)]="labelConfig.fields.company"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="saveLabelConfig()"
+                                        class="rounded border-gray-300">
+                                    Empresa
+                                </label>
+                                <label class="flex items-center gap-1.5 text-sm text-gray-700">
+                                    <input type="checkbox" [(ngModel)]="labelConfig.fields.position"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="saveLabelConfig()"
+                                        class="rounded border-gray-300">
+                                    Cargo
+                                </label>
+                                <label class="flex items-center gap-1.5 text-sm text-gray-700">
+                                    <input type="checkbox" [(ngModel)]="labelConfig.fields.city"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="saveLabelConfig()"
+                                        class="rounded border-gray-300">
+                                    Cidade
+                                </label>
+                            </div>
+                        </div>
+                        <div>
                             <div class="flex justify-between text-xs text-gray-500 mb-1">
                                 <span>Fonte do nome</span>
                                 <span>{{ labelConfig.fontSizeMm.name }}mm</span>

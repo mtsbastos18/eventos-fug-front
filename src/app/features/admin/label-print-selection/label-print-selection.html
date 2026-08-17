@@ -45,6 +45,11 @@
                                 class="rounded border-gray-300">
                             Cargo
                         </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" [(ngModel)]="config.fields.city" (ngModelChange)="saveConfig()"
+                                class="rounded border-gray-300">
+                            Cidade
+                        </label>
                     </div>
                     <p class="text-xs text-gray-400 mt-1">Nome, nome do evento e QR code de check-in sempre aparecem
                         na etiqueta.</p>
@@ -138,6 +143,9 @@
                                 </div>
                                 <div *ngIf="config.fields.position && previewParticipant.position"
                                     [style.font-size.mm]="config.fontSizeMm.extra">{{ previewParticipant.position }}
+                                </div>
+                                <div *ngIf="config.fields.city && previewParticipant.city"
+                                    [style.font-size.mm]="config.fontSizeMm.extra">{{ previewParticipant.city }}
                                 </div>
                             </div>
                             <!-- <app-qr-code [value]="previewParticipant.checkin_token || 'preview'"

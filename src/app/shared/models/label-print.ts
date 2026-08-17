@@ -4,7 +4,7 @@ export type LabelSize = '29x90' | '38x90';
 
 export interface LabelConfig {
   labelSize: LabelSize;
-  fields: { company: boolean; position: boolean };
+  fields: { company: boolean; position: boolean; city: boolean };
   fontSizeMm: { name: number; extra: number; eventName: number };
   align: 'left' | 'center' | 'right';
   nameFormat: 'full' | 'first';
@@ -23,7 +23,7 @@ export const LABEL_PRINT_JOB_STORAGE_KEY = 'label-print-job';
 
 export const DEFAULT_LABEL_CONFIG: LabelConfig = {
   labelSize: '29x90',
-  fields: { company: false, position: false },
+  fields: { company: false, position: false, city: false },
   fontSizeMm: { name: 4.5, extra: 2.5, eventName: 2 },
   align: 'center',
   nameFormat: 'full',

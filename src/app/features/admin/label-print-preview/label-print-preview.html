@@ -33,6 +33,8 @@
                     {{ p.company }}</div>
                 <div *ngIf="config?.fields?.position && p.position" [style.font-size.mm]="config?.fontSizeMm?.extra">
                     {{ p.position }}</div>
+                <div *ngIf="config?.fields?.city && p.city" [style.font-size.mm]="config?.fontSizeMm?.extra">
+                    {{ p.city }}</div>
             </div>
             <!-- <app-qr-code [value]="p.checkin_token || ''" [sizePx]="68"></app-qr-code> -->
         </div>

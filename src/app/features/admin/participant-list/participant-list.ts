@@ -233,6 +233,7 @@ export class ParticipantListComponent implements OnInit {
           name: formValue.name || this.participantToConfirm.name,
           company: formValue.company,
           position: formValue.position,
+          city: formValue.city,
         },
       ],
       config: this.labelConfig,
