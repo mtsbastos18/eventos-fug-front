@@ -13,6 +13,8 @@ export interface EventModel {
   slug?: string;
   video_url?: string;
   gallery?: string[];
+  archived_at?: string | null;
+  is_archived?: boolean;
   created_at?: string;
   updated_at?: string;
 }

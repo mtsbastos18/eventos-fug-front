@@ -24,6 +24,14 @@
                 </svg>
                 Meus Eventos
             </a>
+            <a routerLink="/admin/events/archived" routerLinkActive="bg-green-50 text-gray-900"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 8h14M5 8a2 2 0 01-2-2V4a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 01-2 2M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+                Eventos Arquivados
+            </a>
         </nav>
 
         <div class="px-3 py-4 ">
@@ -64,6 +72,11 @@
                 <a routerLink="/admin/events" routerLinkActive="bg-green-50 text-gray-900" (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
                     Meus Eventos
+                </a>
+                <a routerLink="/admin/events/archived" routerLinkActive="bg-green-50 text-gray-900"
+                    (click)="mobileOpen = false"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
+                    Eventos Arquivados
                 </a>
             </nav>
             <div class="px-3 py-4 ">

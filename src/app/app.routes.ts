@@ -4,6 +4,7 @@ import { EventDetailsComponent } from './features/public/event-details/event-det
 import { LoginComponent } from './features/admin/login/login';
 import { DashboardComponent } from './features/admin/dashboard/dashboard';
 import { EventManagementComponent } from './features/admin/event-management/event-management';
+import { EventArchiveComponent } from './features/admin/event-archive/event-archive';
 import { ParticipantListComponent } from './features/admin/participant-list/participant-list';
 import { CheckinComponent } from './features/admin/checkin/checkin';
 import { LabelPrintSelectionComponent } from './features/admin/label-print-selection/label-print-selection';
@@ -31,6 +32,7 @@ export const routes: Routes = [
         children: [
           { path: 'dashboard', component: DashboardComponent },
           { path: 'events', component: EventManagementComponent },
+          { path: 'events/archived', component: EventArchiveComponent },
           { path: 'events/:id/participants', component: ParticipantListComponent },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           { path: 'events/:id/checkin', component: CheckinComponent },

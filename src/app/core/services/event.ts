@@ -50,8 +50,17 @@ export class EventService {
     return this.http.get(`${this.apiUrl}/admin/events/dashboard`);
   }
 
-  getAdminEvents(): Observable<EventModel[]> {
-    return this.http.get<EventModel[]>(`${this.apiUrl}/admin/events`);
+  getAdminEvents(archived = false): Observable<EventModel[]> {
+    const params = archived ? new HttpParams().set('archived', '1') : undefined;
+    return this.http.get<EventModel[]>(`${this.apiUrl}/admin/events`, { params });
+  }
+
+  archiveEvent(id: number): Observable<EventModel> {
+    return this.http.post<EventModel>(`${this.apiUrl}/admin/events/${id}/archive`, {});
+  }
+
+  unarchiveEvent(id: number): Observable<EventModel> {
+    return this.http.post<EventModel>(`${this.apiUrl}/admin/events/${id}/unarchive`, {});
   }
 
   getEventById(id: number): Observable<EventModel> {

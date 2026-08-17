@@ -2,19 +2,13 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Meus Eventos</h1>
-            <p class="text-sm text-gray-500 mt-1">Gerencie todos os seus eventos em um só lugar</p>
+            <h1 class="text-2xl font-bold text-gray-900">Eventos Arquivados</h1>
+            <p class="text-sm text-gray-500 mt-1">Eventos que não aparecem na landing page nem em "Meus Eventos"</p>
         </div>
-        <div class="flex items-center gap-3">
-            <a routerLink="/admin/events/archived"
-                class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none">
-                Eventos Arquivados
-            </a>
-            <button (click)="openCreateModal()"
-                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none">
-                + Novo Evento
-            </button>
-        </div>
+        <a routerLink="/admin/events"
+            class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none">
+            Voltar para Meus Eventos
+        </a>
     </div>
 
     <div *ngIf="isLoading" class="flex justify-center p-10">
@@ -26,20 +20,19 @@
     </div>
 
     <div *ngIf="!isLoading" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        <div *ngFor="let event of events" class="bg-white rounded-lg shadow overflow-hidden flex flex-col">
+        <div *ngFor="let event of events" class="bg-white rounded-lg shadow overflow-hidden flex flex-col opacity-90">
 
             <div class="relative h-36"
-                [ngClass]="event.image_path ? '' : 'bg-gradient-to-br from-green-600 to-green-800'">
+                [ngClass]="event.image_path ? '' : 'bg-gradient-to-br from-gray-500 to-gray-700'">
                 <img *ngIf="event.image_path" [src]="storageUrl + event.image_path" [alt]="event.title"
-                    class="w-full h-full object-cover">
+                    class="w-full h-full object-cover grayscale">
                 <svg *ngIf="!event.image_path" class="absolute inset-0 m-auto h-10 w-10 text-white/70" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-semibold"
-                    [ngClass]="isPast(event) ? 'bg-gray-700 text-white' : 'bg-green-600 text-white'">
-                    {{ isPast(event) ? 'Realizado' : 'Agendado' }}
+                <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-semibold bg-gray-800 text-white">
+                    Arquivado
                 </span>
             </div>
 
@@ -70,25 +63,17 @@
                         class="flex-1 text-center px-3 py-2 rounded border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors">
                         Ver Detalhes
                     </a>
-                    <a [routerLink]="['/admin/events', event.id, 'participants']"
-                        class="flex-1 text-center px-3 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
-                        Inscrições
-                    </a>
                 </div>
-                <button (click)="archiveEvent(event)"
-                    class="mt-3 w-full text-center px-3 py-2 rounded border border-gray-300 text-gray-500 text-sm font-medium hover:bg-gray-50 transition-colors">
-                    Arquivar
+                <button (click)="restoreEvent(event)"
+                    class="mt-3 w-full text-center px-3 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
+                    Restaurar
                 </button>
             </div>
         </div>
 
         <p *ngIf="events.length === 0" class="col-span-full text-center text-sm text-gray-500 py-12">
-            Nenhum evento encontrado.
+            Nenhum evento arquivado.
         </p>
     </div>
-
-    <app-event-form-modal [show]="showCreateModal" [eventToEdit]="null" (saved)="onEventSaved()"
-        (closed)="closeCreateModal()">
-    </app-event-form-modal>
 
 </div>

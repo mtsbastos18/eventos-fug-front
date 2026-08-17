@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
 import { EventFormModalComponent } from '../event-form-modal/event-form-modal';
@@ -14,6 +15,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class EventManagementComponent implements OnInit {
   private eventService = inject(EventService);
+  private toastr = inject(ToastrService);
 
   events: EventModel[] = [];
   isLoading = true;
@@ -55,5 +57,22 @@ export class EventManagementComponent implements OnInit {
   onEventSaved(): void {
     this.showCreateModal = false;
     this.loadEvents();
+  }
+
+  archiveEvent(event: EventModel): void {
+    if (
+      !confirm(
+        `Arquivar o evento "${event.title}"? Ele deixará de aparecer na landing page e nesta lista, mas nada é apagado.`,
+      )
+    ) {
+      return;
+    }
+    this.eventService.archiveEvent(event.id).subscribe({
+      next: () => {
+        this.toastr.success('Evento arquivado com sucesso.');
+        this.loadEvents();
+      },
+      error: () => this.toastr.error('Erro ao arquivar o evento.'),
+    });
   }
 }
