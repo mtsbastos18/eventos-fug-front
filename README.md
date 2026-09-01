@@ -1,3 +1,16 @@
+# Storia Eventos — Web
+
+Fork multi-tenant do frontend de Eventos FUG. Nasce a partir da branch `develop`
+no commit `131afe753904d6ae00ae16d28df7a8469710ac14`.
+
+O código de origem (`front/`, branch `develop`/`main`) segue rodando em produção
+para a Fundação Ulysses Guimarães e **não é afetado** por este fork. Contexto
+completo: `SDD-multi-tenancy.md` na raiz do repositório de origem. Nesta primeira
+fase apenas o backend (API) recebeu a fundação de multi-tenancy — o frontend
+ainda não foi adaptado.
+
+---
+
 # Front
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
