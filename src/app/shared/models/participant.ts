@@ -8,6 +8,7 @@ export interface Participant {
   company?: string;
   position?: string;
   city?: string;
+  additional_info?: string;
   created_at?: string;
   checked_in_at?: string | null;
   checkin_token?: string;

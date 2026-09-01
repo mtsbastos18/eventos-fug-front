@@ -42,6 +42,7 @@ export class EventDetailsComponent implements OnInit {
     company: ['', [Validators.required]],
     position: ['', [Validators.required]],
     city: ['', [Validators.required]],
+    additional_info: ['', [Validators.maxLength(300)]],
   });
 
   verifyForm: FormGroup = this.fb.group({
@@ -99,6 +100,7 @@ export class EventDetailsComponent implements OnInit {
       company: formData.company,
       position: formData.position,
       city: formData.city,
+      additional_info: formData.additional_info,
     };
 
     this.eventService.registerParticipant(participantData).subscribe({

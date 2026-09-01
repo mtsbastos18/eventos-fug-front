@@ -152,6 +152,15 @@
                                 class="text-red-500 text-xs mt-1">Telefone inválido.</span>
                         </div>
 
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Informações adicionais</label>
+                            <textarea formControlName="additional_info" rows="3" maxlength="300"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                            <span
+                                *ngIf="registrationForm.get('additional_info')?.invalid && registrationForm.get('additional_info')?.touched"
+                                class="text-red-500 text-xs mt-1">Máximo de 300 caracteres.</span>
+                        </div>
+
                         <button type="submit" [disabled]="registrationForm.invalid || isSubmitting"
                             class="w-full mt-4 py-3 px-4 bg-green-600 text-white font-medium rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-green-400 transition-colors">
                             {{ isSubmitting ? 'Processando...' : 'Confirmar Inscrição' }}

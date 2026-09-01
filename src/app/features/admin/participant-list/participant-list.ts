@@ -80,6 +80,7 @@ export class ParticipantListComponent implements OnInit {
     company: [''],
     position: [''],
     city: [''],
+    additional_info: ['', Validators.maxLength(300)],
   });
 
   currentPage = 1;
@@ -183,6 +184,7 @@ export class ParticipantListComponent implements OnInit {
       company: participant.company ?? '',
       position: participant.position ?? '',
       city: participant.city ?? '',
+      additional_info: participant.additional_info ?? '',
     });
     this.labelConfig = loadLabelPrintConfig();
     this.showConfirmEntryModal = true;
