@@ -7,6 +7,7 @@ import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 import { environment } from '../../../../environments/environment';
+import { TenantService } from '../../../core/services/tenant';
 
 @Component({
   selector: 'app-landing-page',
@@ -17,6 +18,11 @@ import { environment } from '../../../../environments/environment';
 export class LandingPageComponent implements OnInit {
   private eventService = inject(EventService);
   private toastr = inject(ToastrService);
+  private tenantService = inject(TenantService);
+
+  get tenantSlug(): string {
+    return this.tenantService.currentTenant()?.slug ?? '';
+  }
 
   events: EventModel[] = [];
   pastEvents: EventModel[] = [];

@@ -1,0 +1,20 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div class="w-full max-w-2xl">
+        <h1 class="text-2xl font-semibold text-gray-900 text-center mb-2">Escolha um cliente</h1>
+        <p class="text-gray-500 text-center mb-8">Você tem acesso a mais de um cliente. Selecione com qual deseja trabalhar.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button *ngFor="let tenant of tenants" type="button" (click)="select(tenant.id)"
+                [disabled]="switchingId !== null"
+                class="bg-white border border-gray-200 rounded-lg p-5 text-left hover:border-green-600 hover:shadow-md transition-all disabled:opacity-50">
+                <p class="font-semibold text-gray-900">{{ tenant.name }}</p>
+                <p class="text-sm text-gray-500 mt-1">Papel: {{ tenant.role }}</p>
+                <p *ngIf="switchingId === tenant.id" class="text-sm text-green-600 mt-2">Entrando...</p>
+            </button>
+        </div>
+
+        <button type="button" (click)="logout()" class="mt-8 mx-auto block text-sm text-gray-500 hover:text-gray-700">
+            Sair
+        </button>
+    </div>
+</div>

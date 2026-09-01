@@ -9,6 +9,7 @@ import { EventModel } from '../../../shared/models/event';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 import { environment } from '../../../../environments/environment';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
+import { TenantService } from '../../../core/services/tenant';
 
 @Component({
   selector: 'app-event-details',
@@ -28,6 +29,11 @@ export class EventDetailsComponent implements OnInit {
   private eventService = inject(EventService);
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
+  private tenantService = inject(TenantService);
+
+  get tenantSlug(): string {
+    return this.tenantService.currentTenant()?.slug ?? '';
+  }
 
   event: EventModel | null = null;
   isLoading = true;

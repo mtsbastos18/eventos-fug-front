@@ -7,6 +7,7 @@ import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 import { environment } from '../../../../environments/environment';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
 import { forkJoin } from 'rxjs';
+import { TenantService } from '../../../core/services/tenant';
 
 @Component({
   selector: 'app-past-event',
@@ -18,6 +19,11 @@ export class PastEventComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private eventService = inject(EventService);
   private sanitizer = inject(DomSanitizer);
+  private tenantService = inject(TenantService);
+
+  get tenantSlug(): string {
+    return this.tenantService.currentTenant()?.slug ?? '';
+  }
 
   event: any | null = null; // Usando any caso a model ainda não tenha os campos de video e galeria
   isLoading = true;
@@ -47,7 +53,7 @@ export class PastEventComponent implements OnInit {
 
     const handleRequests$ = {
       event: this.eventService.getPublicEventById(id),
-      postEvent: this.eventService.getPostEventDetails(id),
+      postEvent: this.eventService.getPublicPostEventDetails(id),
     };
 
     // forkJoin(handleRequests$).subscribe({
@@ -66,7 +72,7 @@ export class PastEventComponent implements OnInit {
     this.eventService.getPublicEventById(id).subscribe({
       next: (data) => {
         this.event = data;
-        this.eventService.getPostEventDetails(this.event.id).subscribe((response) => {
+        this.eventService.getPublicPostEventDetails(this.event.id).subscribe((response) => {
           this.postEventData = response;
           const rawVideoUrl =
             this.storageUrl + response.video_path || 'https://www.youtube.com/embed/dQw4w9WgXcQ';

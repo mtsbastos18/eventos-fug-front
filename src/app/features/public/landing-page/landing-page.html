@@ -32,10 +32,11 @@
                 class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <!-- Imagem de Capa do Evento -->
 
-                <a [routerLink]="['/inscricao', event.slug]">
-                    <img [src]=" event.image_path ? storageUrl + event.image_path
-                    : 'https://eventosfug.com.br/eventos_api/storage/fugnacional_cover.jpeg'" alt=" Capa do evento"
+                <a [routerLink]="['/e', tenantSlug, 'inscricao', event.slug]">
+                    <img *ngIf="event.image_path" [src]="storageUrl + event.image_path" alt="Capa do evento"
                         class="w-full h-48 object-cover">
+                    <div *ngIf="!event.image_path" class="w-full h-48 bg-gradient-to-br from-green-600 to-green-800">
+                    </div>
                 </a>
 
                 <div class="p-6 flex-1">
@@ -72,7 +73,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-6 py-4">
-                    <a [routerLink]="['/inscricao', event.slug]"
+                    <a [routerLink]="['/e', tenantSlug, 'inscricao', event.slug]"
                         class="block text-center w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 focus:outline-none transition-colors">
                         Confirme sua presença
                     </a>
@@ -134,7 +135,7 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 px-6 py-4">
-                        <a [routerLink]="['/eventos-passados', event.slug]"
+                        <a [routerLink]="['/e', tenantSlug, 'eventos-passados', event.slug]"
                             class="block text-center w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 focus:outline-none transition-colors">
                             Confira como foi
                         </a>

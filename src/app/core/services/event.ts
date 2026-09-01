@@ -5,6 +5,7 @@ import { EventModel } from '../../shared/models/event';
 import { Participant } from '../../shared/models/participant';
 import { PaginatedResponse } from '../../shared/models/pagination';
 import { Observable } from 'rxjs';
+import { TenantService } from './tenant';
 
 export interface ParticipantFilters {
   page?: number;
@@ -25,25 +26,31 @@ export interface BulkCheckinResponse {
 export class EventService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private tenantService = inject(TenantService);
+
+  /** Rotas públicas passam pelo prefixo /t/{slug} — o tenant já foi resolvido pelo tenantResolver. */
+  private get publicBase(): string {
+    return `${this.apiUrl}/t/${this.tenantService.currentTenant()?.slug}`;
+  }
 
   getPublicEvents(): Observable<EventModel[]> {
-    return this.http.get<EventModel[]>(`${this.apiUrl}/events`);
+    return this.http.get<EventModel[]>(`${this.publicBase}/events`);
   }
 
   getPastEvents(): Observable<EventModel[]> {
-    return this.http.get<EventModel[]>(`${this.apiUrl}/events/past`);
+    return this.http.get<EventModel[]>(`${this.publicBase}/events/past`);
   }
 
   getPublicEventById(id: string): Observable<EventModel> {
-    return this.http.get<EventModel>(`${this.apiUrl}/events/${id}`);
+    return this.http.get<EventModel>(`${this.publicBase}/events/${id}`);
   }
 
   registerParticipant(data: Participant): Observable<any> {
-    return this.http.post(`${this.apiUrl}/events/register`, data);
+    return this.http.post(`${this.publicBase}/events/register`, data);
   }
 
   verifyParticipant(data: { email: string; event_id: number; code: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/events/register/verify`, data);
+    return this.http.post(`${this.publicBase}/events/register/verify`, data);
   }
 
   getDashboardMetrics(): Observable<any> {
@@ -136,8 +143,14 @@ export class EventService {
     });
   }
 
+  /** Admin, dentro do tenant já resolvido pelo JWT — sem prefixo de slug. */
   getPostEventDetails(eventId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/events/${eventId}/post-detail`);
+    return this.http.get(`${this.apiUrl}/admin/events/${eventId}/post-detail`);
+  }
+
+  /** Pública, usada pela página de "eventos passados". */
+  getPublicPostEventDetails(eventId: string): Observable<any> {
+    return this.http.get(`${this.publicBase}/events/${eventId}/post-detail`);
   }
 
   // Adicione este método dentro da classe EventService

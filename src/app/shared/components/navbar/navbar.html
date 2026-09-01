@@ -1,11 +1,11 @@
 <nav class="bg-green-600 shadow-lg relative z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-            <div class="flex-shrink-0 cursor-pointer flex items-center" routerLink="/">
-                <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-13">
+            <div class="flex-shrink-0 cursor-pointer flex items-center" [routerLink]="homeLink">
+                <app-brand-logo heightClass="h-13"></app-brand-logo>
             </div>
             <div class="flex items-center space-x-4">
-                <a routerLink="/" class="text-white hover:text-orange font-medium transition-colors">Eventos</a>
+                <a [routerLink]="homeLink" class="text-white hover:text-orange font-medium transition-colors">Eventos</a>
 
                 <ng-container *ngIf="authService.currentUser$ | async as user; else unauth">
                     <a routerLink="/admin/dashboard"

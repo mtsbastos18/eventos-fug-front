@@ -7,6 +7,7 @@ import {
   CertificateTemplate,
   PublicCertificateInfo,
 } from '../../shared/models/certificate';
+import { TenantService } from './tenant';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,11 @@ import {
 export class CertificateService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private tenantService = inject(TenantService);
+
+  private get publicBase(): string {
+    return `${this.apiUrl}/t/${this.tenantService.currentTenant()?.slug}`;
+  }
 
   getTemplate(eventId: number): Observable<CertificateTemplate> {
     return this.http.get<CertificateTemplate>(
@@ -85,12 +91,12 @@ export class CertificateService {
   }
 
   getPublicCertificate(token: string): Observable<PublicCertificateInfo> {
-    return this.http.get<PublicCertificateInfo>(`${this.apiUrl}/certificates/${token}`);
+    return this.http.get<PublicCertificateInfo>(`${this.publicBase}/certificates/${token}`);
   }
 
   downloadPublicCertificate(token: string, document: string): Observable<Blob> {
     return this.http.post(
-      `${this.apiUrl}/certificates/${token}/download`,
+      `${this.publicBase}/certificates/${token}/download`,
       { document },
       { responseType: 'blob' },
     );

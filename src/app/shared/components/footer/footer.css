@@ -1,5 +1,5 @@
 .footer {
-  background-color: #f1edec;
+  background-color: var(--surface-light);
   padding: 2rem 1rem;
   border-top: 1px solid #ffffff;
   margin-top: 2rem;
@@ -33,7 +33,7 @@
 }
 
 .menu-main a:hover {
-  color: #ed7130;
+  color: var(--primary-bright);
 }
 
 @media (max-width: 768px) {

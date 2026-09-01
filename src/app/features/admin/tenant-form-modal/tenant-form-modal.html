@@ -1,0 +1,160 @@
+<div *ngIf="show" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 px-4 py-8">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
+        <div class="px-6 py-4 bg-green-600 text-white flex justify-between items-center">
+            <h3 class="text-lg font-semibold">{{ isEditing ? 'Editar Cliente' : 'Novo Cliente' }}</h3>
+            <button (click)="close()" class="text-white hover:text-green-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="px-6 py-4 space-y-4 max-h-[75vh] overflow-y-auto">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                    <input type="text" formControlName="name" (input)="onNameInput()"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL pública)</label>
+                    <input type="text" formControlName="slug" [readonly]="isEditing"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500 disabled:bg-gray-100">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Razão social</label>
+                <input type="text" formControlName="legal_name"
+                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do remetente de e-mail</label>
+                    <input type="text" formControlName="mail_from_name"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mail de resposta (Reply-To)</label>
+                    <input type="email" formControlName="mail_reply_to"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prefixo do certificado</label>
+                    <input type="text" formControlName="certificate_prefix" maxlength="10"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select formControlName="status"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+                        <option value="active">Ativo</option>
+                        <option value="suspended">Suspenso</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Site do cliente</label>
+                <input type="url" formControlName="site_url" placeholder="https://"
+                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Logo</label>
+                <input type="file" accept="image/png,image/jpeg" (change)="onLogoSelected($event)"
+                    class="w-full text-sm text-gray-600">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Cores</label>
+                <div class="grid grid-cols-4 gap-3">
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Primária</span>
+                        <input type="color" formControlName="primary_color" class="w-full h-9 rounded border border-gray-300">
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Secundária</span>
+                        <input type="color" formControlName="secondary_color" class="w-full h-9 rounded border border-gray-300">
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Destaque</span>
+                        <input type="color" formControlName="accent_color" class="w-full h-9 rounded border border-gray-300">
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Superfície</span>
+                        <input type="color" formControlName="surface_color" class="w-full h-9 rounded border border-gray-300">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview ao vivo -->
+            <div class="rounded-lg overflow-hidden border border-gray-200">
+                <div class="px-4 py-3 flex items-center justify-between"
+                    [style.backgroundColor]="preview.primary_color" [style.color]="'#fff'">
+                    <span class="font-medium">{{ preview.name || 'Nome do cliente' }}</span>
+                    <button type="button" class="px-3 py-1 rounded text-sm font-medium"
+                        [style.backgroundColor]="preview.secondary_color" [style.color]="'#fff'">
+                        Inscrever-se
+                    </button>
+                </div>
+                <div class="px-4 py-3" [style.backgroundColor]="preview.surface_color">
+                    <span class="text-sm" [style.color]="preview.accent_color">Texto de destaque de exemplo</span>
+                </div>
+            </div>
+
+            <!-- Usuários do cliente -->
+            <div *ngIf="isEditing" class="border-t border-gray-200 pt-4">
+                <h4 class="text-sm font-semibold text-gray-700 mb-2">Usuários</h4>
+
+                <ul class="divide-y divide-gray-100 mb-3">
+                    <li *ngFor="let user of users" class="py-2 flex items-center justify-between text-sm">
+                        <span>{{ user.name }} <span class="text-gray-400">({{ user.email }}) — {{ user.role }}</span></span>
+                        <button type="button" (click)="removeUser(user.id)" class="text-red-600 hover:text-red-800 text-xs">
+                            Remover
+                        </button>
+                    </li>
+                    <li *ngIf="!loadingUsers && users.length === 0" class="py-2 text-sm text-gray-400">
+                        Nenhum usuário vinculado ainda.
+                    </li>
+                </ul>
+
+                <form [formGroup]="inviteForm" (ngSubmit)="invite()" class="flex gap-2 items-end flex-wrap">
+                    <div class="flex-1 min-w-[140px]">
+                        <input type="text" formControlName="name" placeholder="Nome"
+                            class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm">
+                    </div>
+                    <div class="flex-1 min-w-[160px]">
+                        <input type="email" formControlName="email" placeholder="E-mail"
+                            class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm">
+                    </div>
+                    <select formControlName="role" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+                        <option value="owner">owner</option>
+                        <option value="staff">staff</option>
+                        <option value="viewer">viewer</option>
+                    </select>
+                    <button type="submit" [disabled]="inviteForm.invalid"
+                        class="px-3 py-1.5 rounded text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50">
+                        Convidar
+                    </button>
+                </form>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" (click)="close()"
+                    class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="tenantForm.invalid || isSubmitting"
+                    class="px-4 py-2 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50">
+                    {{ isSubmitting ? 'Salvando...' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

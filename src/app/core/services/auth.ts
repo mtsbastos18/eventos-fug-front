@@ -2,7 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { User } from '../../shared/models/user';
+import { TenantMembership } from '../../shared/models/tenant';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+
+export interface LoginResponse {
+  access_token?: string;
+  token?: string;
+  user?: User;
+  tenants?: TenantMembership[];
+  [key: string]: unknown;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -21,18 +30,21 @@ export class AuthService {
     }
   }
 
-  login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
+  login(credentials: any): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap((res) => {
         // Verifica diferentes formatos comuns de retorno de API
-        const token = res?.token || res?.access_token || res?.data?.token;
-        const user = res?.user || res?.data?.user;
+        const token = res?.token || res?.access_token || (res as any)?.data?.token;
+        const user = res?.user || (res as any)?.data?.user;
 
         if (token) {
-          localStorage.setItem('token', token);
+          this.setToken(token);
           if (user) {
             localStorage.setItem('user', JSON.stringify(user));
             this.currentUserSubject.next(user);
+          }
+          if (res?.tenants) {
+            localStorage.setItem('tenants', JSON.stringify(res.tenants));
           }
         } else {
           console.warn('Login bem-sucedido, mas o token não foi encontrado na resposta da API:', res);
@@ -44,7 +56,13 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('tenant');
+    localStorage.removeItem('tenants');
     this.currentUserSubject.next(null);
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem('token', token);
   }
 
   getToken(): string | null {
@@ -53,5 +71,9 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  isMaster(): boolean {
+    return !!this.currentUserSubject.value?.is_master;
   }
 }

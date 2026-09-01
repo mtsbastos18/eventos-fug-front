@@ -2,8 +2,28 @@
 
     <!-- Sidebar (desktop) -->
     <aside class="hidden md:flex md:flex-col w-64 bg-green-600 border-r border-gray-200 fixed inset-y-0 z-30">
-        <div class="h-16 flex items-center justify-center px-6 text-center  border-gray-200">
-            <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-10">
+        <div class="h-16 flex items-center justify-center px-6 text-center border-gray-200">
+            <app-brand-logo heightClass="h-10"></app-brand-logo>
+        </div>
+
+        <!-- Indicador do cliente ativo + seletor, se houver mais de um -->
+        <div class="px-3 pb-2 relative" *ngIf="tenantService.currentTenant() as tenant">
+            <button type="button" (click)="tenantMenuOpen = !tenantMenuOpen"
+                [disabled]="tenantService.availableTenants().length <= 1"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium text-white bg-black/10 disabled:cursor-default">
+                <span class="truncate">{{ tenant.name }}</span>
+                <svg *ngIf="tenantService.availableTenants().length > 1" class="h-4 w-4 flex-shrink-0" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div *ngIf="tenantMenuOpen" class="absolute left-3 right-3 mt-1 bg-white rounded-md shadow-lg z-40 py-1">
+                <button *ngFor="let membership of tenantService.availableTenants()" type="button"
+                    (click)="switchTenant(membership.id)"
+                    class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    {{ membership.name }}
+                </button>
+            </div>
         </div>
 
         <nav class="flex-1 px-3 py-4 space-y-1">
@@ -32,6 +52,14 @@
                 </svg>
                 Eventos Arquivados
             </a>
+            <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-green-50 text-gray-900"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-4.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-4-4" />
+                </svg>
+                Clientes
+            </a>
         </nav>
 
         <div class="px-3 py-4 ">
@@ -53,7 +81,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-        <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-8">
+        <app-brand-logo heightClass="h-8"></app-brand-logo>
     </header>
 
     <!-- Drawer (mobile) -->
@@ -61,7 +89,7 @@
         <div class="fixed inset-0 bg-gray-900/50" (click)="mobileOpen = false"></div>
         <aside class="relative w-64 bg-green-600 h-full flex flex-col shadow-xl">
             <div class="h-16 flex items-center px-6  border-gray-200">
-                <img src="logo_.png" alt="Fundação Ulysses Guimarães" class="h-10">
+                <app-brand-logo heightClass="h-10"></app-brand-logo>
             </div>
             <nav class="flex-1 px-3 py-4 space-y-1">
                 <a routerLink="/admin/dashboard" routerLinkActive="bg-green-50 text-gray-900"
@@ -77,6 +105,11 @@
                     (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
                     Eventos Arquivados
+                </a>
+                <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-green-50 text-gray-900"
+                    (click)="mobileOpen = false"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
+                    Clientes
                 </a>
             </nav>
             <div class="px-3 py-4 ">
