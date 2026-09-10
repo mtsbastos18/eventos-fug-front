@@ -7,8 +7,8 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
-import { environment } from '../../../../environments/environment';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
+import { EVENT_COVER_PLACEHOLDER, EventCoverPipe } from '../../../shared/pipes/event-cover.pipe';
 import { TenantService } from '../../../core/services/tenant';
 
 @Component({
@@ -20,6 +20,7 @@ import { TenantService } from '../../../core/services/tenant';
     RouterLink,
     NgxMaskDirective,
     SafeHtmlPipe,
+    EventCoverPipe,
   ],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
@@ -38,7 +39,7 @@ export class EventDetailsComponent implements OnInit {
   event: EventModel | null = null;
   isLoading = true;
   error = '';
-  storageUrl = environment.storageUrl;
+  readonly coverPlaceholder = EVENT_COVER_PLACEHOLDER;
 
   registrationForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],

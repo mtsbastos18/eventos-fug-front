@@ -1,9 +1,13 @@
 <app-navbar></app-navbar>
 
 <div *ngIf="!isLoading && event" class="w-full h-64 md:h-80 lg:h-96 bg-gray-200 relative overflow-hidden">
-    <!-- Imagem de Banner que virá do backend. Utilizando placeholder temporário caso não exista -->
-    <img [src]="event.image_path ? storageUrl + event.image_path : 'https://eventosfug.com.br/eventos_api/storage/fugnacional_cover.jpeg'"
-        alt="Banner do evento" class="w-full h-full object-cover">
+    <!-- Banner 1920x400 no desktop e 360x200 no celular. Placeholder caso não exista capa. -->
+    <picture class="block w-full h-full">
+        <source media="(max-width: 767px)"
+            [srcset]="(event | eventCover:'mobile') || coverPlaceholder">
+        <img [src]="(event | eventCover) || coverPlaceholder" alt="Banner do evento"
+            class="w-full h-full object-cover">
+    </picture>
     <!-- <div class="absolute inset-0  bg-opacity-30 flex items-end">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8">
             <h1 class="banner text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">{{ event.title }}</h1>

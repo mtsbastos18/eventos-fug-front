@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth';
 import { TenantService } from '../../../core/services/tenant';
 import { TenantThemeService } from '../../../core/services/tenant-theme';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
+import { TenantMembership } from '../../../shared/models/tenant';
 
 @Component({
   selector: 'app-login',
@@ -54,7 +55,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  private routeAfterLogin(tenants: { id: number }[]): void {
+  private routeAfterLogin(tenants: TenantMembership[]): void {
+    // res.tenants só chega no corpo da resposta de login — precisa ser
+    // propagado pro signal aqui, senão o TenantPickerComponent (rota de
+    // 2+ clientes) enxerga a lista vazia e cai no fluxo de "sem cliente".
+    this.tenantService.availableTenants.set(tenants);
+
     if (tenants.length === 0) {
       this.router.navigate(['/admin/sem-cliente']);
       return;

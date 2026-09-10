@@ -6,12 +6,13 @@ import { EventService } from '../../../core/services/event';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 import { environment } from '../../../../environments/environment';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
+import { EVENT_COVER_PLACEHOLDER, EventCoverPipe } from '../../../shared/pipes/event-cover.pipe';
 import { forkJoin } from 'rxjs';
 import { TenantService } from '../../../core/services/tenant';
 
 @Component({
   selector: 'app-past-event',
-  imports: [CommonModule, NavbarComponent, RouterLink, SafeHtmlPipe],
+  imports: [CommonModule, NavbarComponent, RouterLink, SafeHtmlPipe, EventCoverPipe],
   templateUrl: './past-event.html',
   styleUrl: './past-event.css',
 })
@@ -29,6 +30,7 @@ export class PastEventComponent implements OnInit {
   isLoading = true;
   error = '';
   storageUrl = environment.storageUrl;
+  readonly coverPlaceholder = EVENT_COVER_PLACEHOLDER;
 
   // Variáveis para as novas seções
   videoUrl: SafeResourceUrl | null = null;

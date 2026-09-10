@@ -23,10 +23,10 @@
         <div *ngFor="let event of events" class="bg-white rounded-lg shadow overflow-hidden flex flex-col opacity-90">
 
             <div class="relative h-36"
-                [ngClass]="event.image_path ? '' : 'bg-gradient-to-br from-gray-500 to-gray-700'">
-                <img *ngIf="event.image_path" [src]="storageUrl + event.image_path" [alt]="event.title"
+                [ngClass]="(event | eventCover:'mobile') ? '' : 'bg-gradient-to-br from-gray-500 to-gray-700'">
+                <img *ngIf="event | eventCover:'mobile' as cover" [src]="cover" [alt]="event.title"
                     class="w-full h-full object-cover grayscale">
-                <svg *ngIf="!event.image_path" class="absolute inset-0 m-auto h-10 w-10 text-white/70" fill="none"
+                <svg *ngIf="!(event | eventCover:'mobile')" class="absolute inset-0 m-auto h-10 w-10 text-white/70" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

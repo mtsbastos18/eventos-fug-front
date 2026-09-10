@@ -6,12 +6,12 @@ import { forkJoin, Observable } from 'rxjs';
 import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
-import { environment } from '../../../../environments/environment';
+import { EVENT_COVER_PLACEHOLDER, EventCoverPipe } from '../../../shared/pipes/event-cover.pipe';
 import { TenantService } from '../../../core/services/tenant';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [CommonModule, NavbarComponent, RouterLink],
+  imports: [CommonModule, NavbarComponent, RouterLink, EventCoverPipe],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
@@ -28,7 +28,7 @@ export class LandingPageComponent implements OnInit {
   pastEvents: EventModel[] = [];
   isLoading = true;
   error = '';
-  storageUrl = environment.storageUrl;
+  readonly coverPlaceholder = EVENT_COVER_PLACEHOLDER;
 
   ngOnInit(): void {
     this.loadEvents();

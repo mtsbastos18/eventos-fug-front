@@ -13,6 +13,7 @@ import { TenantThemeService } from '../../../core/services/tenant-theme';
   selector: 'app-platform-home',
   imports: [CommonModule, RouterLink],
   templateUrl: './platform-home.html',
+  styleUrl: './platform-home.css',
 })
 export class PlatformHomeComponent implements OnInit {
   private tenantService = inject(TenantService);

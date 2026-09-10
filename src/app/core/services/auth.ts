@@ -76,4 +76,13 @@ export class AuthService {
   isMaster(): boolean {
     return !!this.currentUserSubject.value?.is_master;
   }
+
+  setPassword(payload: {
+    token: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/set-password`, payload);
+  }
 }

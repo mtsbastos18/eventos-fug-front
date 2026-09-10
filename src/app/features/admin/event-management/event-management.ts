@@ -5,11 +5,11 @@ import { ToastrService } from 'ngx-toastr';
 import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
 import { EventFormModalComponent } from '../event-form-modal/event-form-modal';
-import { environment } from '../../../../environments/environment';
+import { EventCoverPipe } from '../../../shared/pipes/event-cover.pipe';
 
 @Component({
   selector: 'app-event-management',
-  imports: [CommonModule, RouterLink, EventFormModalComponent],
+  imports: [CommonModule, RouterLink, EventFormModalComponent, EventCoverPipe],
   templateUrl: './event-management.html',
   styleUrl: './event-management.css',
 })
@@ -20,7 +20,6 @@ export class EventManagementComponent implements OnInit {
   events: EventModel[] = [];
   isLoading = true;
   error = '';
-  storageUrl = environment.storageUrl;
 
   showCreateModal = false;
 

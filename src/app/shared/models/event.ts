@@ -8,6 +8,7 @@ export interface EventModel {
   capacity: number;
   workload_hours?: number;
   image_path?: string;
+  mobile_image_path?: string;
   participants_count?: number;
   checkin_count?: number;
   slug?: string;

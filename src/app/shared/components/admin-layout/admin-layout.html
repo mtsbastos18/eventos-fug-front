@@ -27,7 +27,7 @@
         </div>
 
         <nav class="flex-1 px-3 py-4 space-y-1">
-            <a routerLink="/admin/dashboard" routerLinkActive="bg-green-50 text-gray-900"
+            <a routerLink="/admin/dashboard" routerLinkActive="bg-gray-50 text-red-700"
                 [routerLinkActiveOptions]="{ exact: true }"
                 class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white  hover:bg-gray-50 hover:text-red-700 transition-colors">
                 <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@
                 </svg>
                 Dashboard
             </a>
-            <a routerLink="/admin/events" routerLinkActive="bg-green-50 text-gray-900"
+            <a routerLink="/admin/events" routerLinkActive="bg-gray-50 text-red-700"
                 class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
                 <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,7 +44,7 @@
                 </svg>
                 Meus Eventos
             </a>
-            <a routerLink="/admin/events/archived" routerLinkActive="bg-green-50 text-gray-900"
+            <a routerLink="/admin/events/archived" routerLinkActive="bg-gray-50 text-red-700"
                 class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
                 <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -52,7 +52,7 @@
                 </svg>
                 Eventos Arquivados
             </a>
-            <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-green-50 text-gray-900"
+            <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-gray-50 text-red-700"
                 class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
                 <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -92,21 +92,21 @@
                 <app-brand-logo heightClass="h-10"></app-brand-logo>
             </div>
             <nav class="flex-1 px-3 py-4 space-y-1">
-                <a routerLink="/admin/dashboard" routerLinkActive="bg-green-50 text-gray-900"
+                <a routerLink="/admin/dashboard" routerLinkActive="bg-gray-50 text-red-700"
                     [routerLinkActiveOptions]="{ exact: true }" (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
                     Dashboard
                 </a>
-                <a routerLink="/admin/events" routerLinkActive="bg-green-50 text-gray-900" (click)="mobileOpen = false"
+                <a routerLink="/admin/events" routerLinkActive="bg-gray-50 text-red-700" (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
                     Meus Eventos
                 </a>
-                <a routerLink="/admin/events/archived" routerLinkActive="bg-green-50 text-gray-900"
+                <a routerLink="/admin/events/archived" routerLinkActive="bg-gray-50 text-red-700"
                     (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700transition-colors">
                     Eventos Arquivados
                 </a>
-                <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-green-50 text-gray-900"
+                <a *ngIf="isMaster" routerLink="/admin/tenants" routerLinkActive="bg-gray-50 text-red-700"
                     (click)="mobileOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-50 hover:text-red-700 transition-colors">
                     Clientes

@@ -42,10 +42,10 @@ export class TenantFormModalComponent implements OnChanges {
     certificate_prefix: [''],
     site_url: [''],
     status: ['active', Validators.required],
-    primary_color: ['#842626'],
-    secondary_color: ['#ed7130'],
-    accent_color: ['#ab1e26'],
-    surface_color: ['#f1edec'],
+    primary_color: ['#7a3468'],
+    secondary_color: ['#f0b429'],
+    accent_color: ['#a94f84'],
+    surface_color: ['#f6eef3'],
   });
 
   get isEditing(): boolean {
@@ -136,10 +136,10 @@ export class TenantFormModalComponent implements OnChanges {
     } else {
       this.tenantForm.reset({
         status: 'active',
-        primary_color: '#842626',
-        secondary_color: '#ed7130',
-        accent_color: '#ab1e26',
-        surface_color: '#f1edec',
+        primary_color: '#7a3468',
+        secondary_color: '#f0b429',
+        accent_color: '#a94f84',
+        surface_color: '#f6eef3',
       });
     }
   }
@@ -172,8 +172,8 @@ export class TenantFormModalComponent implements OnChanges {
           this.users = [...this.users, user];
           this.inviteForm.reset({ role: 'staff' });
           this.toastr.success(
-            user.generated_password
-              ? `Usuário criado. Senha temporária: ${user.generated_password}`
+            user.invited
+              ? 'Convite enviado por e-mail — o usuário vai definir a própria senha.'
               : 'Usuário vinculado ao cliente.',
             'Sucesso',
           );

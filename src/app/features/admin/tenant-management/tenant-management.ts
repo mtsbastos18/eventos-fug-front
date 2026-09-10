@@ -56,6 +56,16 @@ export class TenantManagementComponent implements OnInit {
     this.showModal = false;
   }
 
+  landingUrl(tenant: Tenant): string {
+    return `${window.location.origin}/e/${tenant.slug}`;
+  }
+
+  copyLandingUrl(tenant: Tenant): void {
+    navigator.clipboard.writeText(this.landingUrl(tenant)).then(() => {
+      this.toastr.success('Link copiado.', 'Sucesso');
+    });
+  }
+
   remove(tenant: Tenant): void {
     if (!confirm(`Excluir o cliente "${tenant.name}"? Esta ação não pode ser desfeita.`)) return;
 

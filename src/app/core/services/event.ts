@@ -79,6 +79,13 @@ export class EventService {
   }
 
   updateEvent(id: number, event: EventModel | FormData): Observable<EventModel> {
+    // O PHP só faz parse de corpo multipart em POST, então um PUT com FormData chega
+    // sem os arquivos. Usamos o method spoofing do Laravel (_method) para o upload funcionar.
+    if (event instanceof FormData) {
+      event.append('_method', 'PUT');
+      return this.http.post<EventModel>(`${this.apiUrl}/admin/events/${id}`, event);
+    }
+
     return this.http.put<EventModel>(`${this.apiUrl}/admin/events/${id}`, event);
   }
 

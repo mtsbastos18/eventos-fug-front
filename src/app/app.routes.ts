@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LandingPageComponent } from './features/public/landing-page/landing-page';
 import { EventDetailsComponent } from './features/public/event-details/event-details';
 import { LoginComponent } from './features/admin/login/login';
+import { SetPasswordComponent } from './features/admin/set-password/set-password';
 import { DashboardComponent } from './features/admin/dashboard/dashboard';
 import { EventManagementComponent } from './features/admin/event-management/event-management';
 import { EventArchiveComponent } from './features/admin/event-archive/event-archive';
@@ -37,6 +38,7 @@ export const routes: Routes = [
   { path: '', component: PlatformHomeComponent },
   { path: 'cliente-nao-encontrado', component: TenantNotFoundComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'definir-senha', component: SetPasswordComponent },
   {
     path: 'admin',
     canActivate: [authGuard],

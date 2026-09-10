@@ -44,8 +44,8 @@ export class TenantAdminService {
     return this.http.get<TenantUserSummary[]>(`${this.apiUrl}/admin/tenants/${id}/users`);
   }
 
-  inviteTenantUser(id: number, payload: InviteTenantUserPayload): Observable<TenantUserSummary & { generated_password?: string }> {
-    return this.http.post<TenantUserSummary & { generated_password?: string }>(
+  inviteTenantUser(id: number, payload: InviteTenantUserPayload): Observable<TenantUserSummary & { invited?: boolean }> {
+    return this.http.post<TenantUserSummary & { invited?: boolean }>(
       `${this.apiUrl}/admin/tenants/${id}/users`,
       payload,
     );

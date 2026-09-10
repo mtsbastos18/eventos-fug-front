@@ -4,10 +4,10 @@
 @import 'quill/dist/quill.snow.css';
 
 :root {
-    --primary-dark: #842626;
-    --primary-bright: #ed7130;
-    --primary-medium: #ab1e26;
-    --surface-light: #f1edec;
+    --primary-dark: #7a3468;
+    --primary-bright: #f0b429;
+    --primary-medium: #a94f84;
+    --surface-light: #f6eef3;
     --surface-base: #ffffff;
     --warning-light: #fde8e7;
 }
@@ -140,9 +140,14 @@
     background-color: var(--primary-medium) !important;
 }
 
-.disabled\:bg-blue-400:disabled {
+.disabled\:bg-blue-400:disabled,
+.disabled\:bg-green-400:disabled {
     /* Versão clara da cor do tenant, para estado desabilitado. */
     background-color: color-mix(in srgb, var(--primary-dark) 35%, white) !important;
+}
+
+.hover\:border-green-600:hover {
+    border-color: var(--primary-dark) !important;
 }
 
 img[src="logo.svg"] {

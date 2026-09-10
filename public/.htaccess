@@ -2,7 +2,12 @@
   RewriteEngine On
   RewriteBase /
 
+  # /api/* vai pro front controller do Laravel (symlink storiaeventos-api -> storiaeventos-api/public),
+  # preservando a URI e a querystring originais — o roteador do Laravel cuida do resto.
+  RewriteRule ^api/(.*)$ storiaeventos-api/index.php [L,QSA]
+
   # Não reescreve requisições para arquivos ou diretórios que existem de fato
+  # (isso já cobre /storage/*, que é um symlink pra storiaeventos-api/storage/app/public)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]

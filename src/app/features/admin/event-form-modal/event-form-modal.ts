@@ -33,6 +33,7 @@ export class EventFormModalComponent implements OnChanges {
     capacity: ['', [Validators.required, Validators.min(1)]],
     workload_hours: ['', [Validators.min(1)]],
     image: [null],
+    mobile_image: [null],
   });
 
   get isEditing(): boolean {
@@ -59,16 +60,17 @@ export class EventFormModalComponent implements OnChanges {
         capacity: this.eventToEdit.capacity,
         workload_hours: this.eventToEdit.workload_hours ?? '',
         image: null,
+        mobile_image: null,
       });
     } else {
       this.eventForm.reset();
     }
   }
 
-  onFileSelected(event: Event): void {
+  onFileSelected(event: Event, control: 'image' | 'mobile_image' = 'image'): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.eventForm.patchValue({ image: file });
+      this.eventForm.patchValue({ [control]: file });
     }
   }
 

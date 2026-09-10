@@ -4,11 +4,11 @@ import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { EventService } from '../../../core/services/event';
 import { EventModel } from '../../../shared/models/event';
-import { environment } from '../../../../environments/environment';
+import { EventCoverPipe } from '../../../shared/pipes/event-cover.pipe';
 
 @Component({
   selector: 'app-event-archive',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, EventCoverPipe],
   templateUrl: './event-archive.html',
   styleUrl: './event-archive.css',
 })
@@ -19,7 +19,6 @@ export class EventArchiveComponent implements OnInit {
   events: EventModel[] = [];
   isLoading = true;
   error = '';
-  storageUrl = environment.storageUrl;
 
   ngOnInit(): void {
     this.loadEvents();

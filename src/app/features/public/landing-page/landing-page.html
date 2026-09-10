@@ -33,10 +33,12 @@
                 <!-- Imagem de Capa do Evento -->
 
                 <a [routerLink]="['/e', tenantSlug, 'inscricao', event.slug]">
-                    <img *ngIf="event.image_path" [src]="storageUrl + event.image_path" alt="Capa do evento"
-                        class="w-full h-48 object-cover">
-                    <div *ngIf="!event.image_path" class="w-full h-48 bg-gradient-to-br from-green-600 to-green-800">
-                    </div>
+                    <ng-container *ngIf="event | eventCover:'mobile' as cover; else semCapa">
+                        <img [src]="cover" alt="Capa do evento" class="w-full h-48 object-cover">
+                    </ng-container>
+                    <ng-template #semCapa>
+                        <div class="w-full h-48 bg-gradient-to-br from-green-600 to-green-800"></div>
+                    </ng-template>
                 </a>
 
                 <div class="p-6 flex-1">
@@ -96,7 +98,7 @@
                 <div *ngFor="let event of pastEvents"
                     class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
                     <!-- Imagem de Capa do Evento Passado -->
-                    <img [src]="event.image_path ? storageUrl + event.image_path : 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                    <img [src]="(event | eventCover:'mobile') || coverPlaceholder"
                         alt="Capa do evento passado" class="w-full h-48 object-cover">
 
                     <div class="p-6 flex-1">
